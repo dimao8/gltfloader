@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 # Project
 project(gltfloader
-  VERSION 0.1.0.0
+  VERSION 0.1.0.1
   DESCRIPTION "glTF 2.0 loader"
   HOMEPAGE_URL ""
   LANGUAGES CXX
@@ -21,12 +21,16 @@ endif()
 set(SOURCES
   src/buffer.cc
   src/gltfloader.cc
+  src/gltfnamedobject.cc
   src/gltfobject.cc
+  src/image.cc
 )
 
 set(HEADERS
   src/buffer.h
-  src/gltfobject.cc
+  src/gltfnamedobject.h
+  src/gltfobject.h
+  src/image.h
 )
 
 set(INTERFACE_HEADERS
@@ -49,6 +53,19 @@ target_include_directories(
 set_target_properties(gltfloader PROPERTIES
   PUBLIC_HEADER "${INTERFACE_HEADERS}"
 )
+
+# Check for uuid
+find_file(UUID_HEADER "uuid.h"
+  PATHS "/usr/include/uuid/")
+if(NOT UUID_HEADER)
+  message(FATAL_ERROR "uuid.h not found")
+else()
+  get_filename_component(UUID_INCLUDE ${UUID_HEADER} PATH)
+  target_include_directories(
+    gltfloader PUBLIC
+    ${UUID_INCLUDE}
+  )
+endif()
 
 # Check for jsonloader
 find_package(litejson)
