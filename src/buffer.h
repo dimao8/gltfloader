@@ -4,6 +4,7 @@
 #include "gltfnamedobject.h"
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -41,14 +42,26 @@ namespace gltfloader
 /// The class provides an error checking mechanism that does not rely on
 /// exceptions. If a constructor fails to load data (e.g., the external file is
 /// not found), the buffer is marked as invalid. In this case, the is_bad()
-/// method will return \c true. Always check this method after creating a buffer
-/// to ensure it was constructed correctly.
+/// method will return \c true. Always check this method after creating a
+/// buffer to ensure it was constructed correctly.
 ///
 class GLTFBuffer : public GLTFNamedObject
 {
 private:
   std::string m_path;          ///< Path to the .bin file
   std::vector<uint8_t> m_data; ///< Raw binary data
+
+  ///
+  /// \brief Create empty default buffer
+  /// \param [in] name -- glTF name of the buffer object
+  ///
+  GLTFBuffer (const std::string &name);
+
+  ///
+  /// \brief Check buffer for correctness
+  /// \return Return true if GLTFBuffer object is valid buffer
+  ///
+  bool is_bad () const;
 
   ///
   /// \brief Set data
@@ -61,27 +74,6 @@ public:
   GLTFBuffer () = delete;
   GLTFBuffer (const GLTFBuffer &) = delete;
 
-  ///
-  /// \brief Create buffer from data vector
-  /// \param [in] name -- glTF name of the buffer object
-  /// \param [in] data -- Data vector
-  ///
-  GLTFBuffer (const std::string &name, const std::vector<uint8_t> &data);
-
-  ///
-  /// \brief Create buffer from data array
-  /// \param [in] name -- glTF name of the buffer object
-  /// \param [in] data -- Pointer to the data array
-  /// \param [in] sz   -- Size of the data
-  ///
-  GLTFBuffer (const std::string &name, const uint8_t *data, size_t sz);
-
-  ///
-  /// \brief Create buffer from binary file
-  /// \param [in] name -- glTF name of the buffer object
-  /// \param [in] path -- Path to the binary file
-  ///
-  GLTFBuffer (const std::string &name, const std::string &path);
   virtual ~GLTFBuffer () {}
 
   ///
@@ -91,16 +83,37 @@ public:
   const std::string &path () const;
 
   ///
-  /// \brief Check buffer for correctness
-  /// \return Return true if GLTFBuffer object is valid buffer
-  ///
-  bool is_bad () const;
-
-  ///
   /// \brief Get raw data
   /// \return Vector of raw buffer data
   ///
   const std::vector<uint8_t> &data () const;
+
+  // Fabric creation methods
+
+  ///
+  /// \brief Create glTF 2.0 buffer from data array
+  ///
+  /// This function is usually used for export, not for .gltf import.
+  ///
+  static std::shared_ptr<GLTFBuffer> create (const std::string &name,
+                                             const std::vector<uint8_t> &data);
+
+  ///
+  /// \brief Create glTF 2.0 buffer from data array
+  ///
+  /// This function is usually used for export, not for .gltf import.
+  ///
+  static std::shared_ptr<GLTFBuffer> create (const std::string &name,
+                                             const uint8_t *data, size_t sz);
+
+  ///
+  /// \brief Create glTF 2.0 buffer from file or Base64 string
+  ///
+  /// This function is usually used for import from .gltf file (or binary
+  /// buffer).
+  ///
+  static std::shared_ptr<GLTFBuffer> create (const std::string &name,
+                                             const std::string &uri);
 };
 
 }

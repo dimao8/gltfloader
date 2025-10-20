@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 # Project
 project(gltfloader
-  VERSION 0.1.0.1
+  VERSION 0.1.0.2
   DESCRIPTION "glTF 2.0 loader"
   HOMEPAGE_URL ""
   LANGUAGES CXX
@@ -12,25 +12,49 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 # Compile options
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED 17)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options(-pedantic)
 endif()
 
 # Sources and headers
 set(SOURCES
+  src/accessor.cc
+  src/accessorsparse.cc
+  src/animation.cc
+  src/animationchannel.cc
+  src/animationsampler.cc
+  src/animationtarget.cc
+  src/asset.cc
   src/buffer.cc
+  src/bufferview.cc
+  src/camera.cc
   src/gltfloader.cc
   src/gltfnamedobject.cc
   src/gltfobject.cc
   src/image.cc
+  src/orthographiccamera.cc
+  src/sparseindices.cc
+  src/sparsevalues.cc
 )
 
 set(HEADERS
+  src/accessorsparse.h
+  src/accessor.h
+  src/animation.h
+  src/animationchannel.h
+  src/animationsampler.h
+  src/animationtarget.h
+  src/asset.h
   src/buffer.h
+  src/bufferview.h
+  src/camera.h
   src/gltfnamedobject.h
   src/gltfobject.h
   src/image.h
+  src/orthographiccamera.h
+  src/sparseindices.h
+  src/sparsevalues.h
 )
 
 set(INTERFACE_HEADERS

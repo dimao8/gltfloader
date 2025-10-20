@@ -1,0 +1,57 @@
+{
+  "asset" : {
+    "version" : "2.0",
+    "generator": "Be my guest"
+  },
+  "cameras" : [
+    {
+      "name" : "Camera Perspective 001",
+      "type" : "perspective",
+      "perspective" : {
+        "aspectRatio": 1.666666666,
+        "yfov": 0.7854,
+        "znear": 0.5,
+        "zfar": 10.0
+      }
+    },
+    {
+      "name" : "Camera Orthographic 002",
+      "type" : "orthographic",
+      "orthographic" : {
+        "xmag": -1,
+        "ymag": 1,
+        "znear": 1,
+        "zfar": 2
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "name" : "Camera 001 node",
+      "camera" : 0,
+      "translation": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name" : "Camera 002 node",
+      "camera" : 1
+    },
+    {
+      "name" : "knot 001",
+      "children": [0, 1],
+      "translation": [
+        0,
+        2,
+        0
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "nodes": [2]
+    }
+  ]
+}

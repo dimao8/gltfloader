@@ -18,9 +18,9 @@ class GLTFBufferView;
 ///
 enum GLTFImageMIMEType
 {
-  image_png,  ///< image/png
-  image_jpeg, ///< image/jpeg
-  unknown     ///< unknown type
+  png,    ///< image/png
+  jpeg,   ///< image/jpeg
+  unknown ///< unknown type
 };
 
 ///
@@ -70,21 +70,28 @@ private:
   std::vector<uint8_t> m_data;
   std::shared_ptr<GLTFBufferView> m_buffer_view;
 
+  GLTFImage (const std::string &name);
+
   void set (const uint8_t *data, size_t sz);
+  bool is_bad () const;
 
 public:
   GLTFImage () = delete;
   GLTFImage (const GLTFImage &) = delete;
-  GLTFImage (const std::string &name, GLTFImageMIMEType mime_type,
-             const std::string &path);
-  GLTFImage (const std::string &name, GLTFImageMIMEType mime_type,
-             const std::shared_ptr<GLTFBufferView> buffer_view);
 
-  bool is_bad () const;
+  virtual ~GLTFImage () {}
+
   GLTFImageMIMEType mime_type () const;
   const std::string &path () const;
   const std::vector<uint8_t> &data () const;
   const std::shared_ptr<GLTFBufferView> buffer_view () const;
+
+  static const std::shared_ptr<GLTFImage> create (const std::string &name,
+                                                  GLTFImageMIMEType mime_type,
+                                                  const std::string &uri);
+  static const std::shared_ptr<GLTFImage>
+  create (const std::string &name, GLTFImageMIMEType mime_type,
+          const std::shared_ptr<GLTFBufferView> buffer_view);
 };
 
 }
