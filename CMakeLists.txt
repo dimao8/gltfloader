@@ -33,14 +33,17 @@ set(SOURCES
   src/gltfnamedobject.cc
   src/gltfobject.cc
   src/image.cc
+  src/material.cc
+  src/normaltextureinfo.cc
+  src/occlusiontextureinfo.cc
   src/orthographiccamera.cc
   src/sparseindices.cc
   src/sparsevalues.cc
 )
 
 set(HEADERS
-  src/accessorsparse.h
   src/accessor.h
+  src/accessorsparse.h
   src/animation.h
   src/animationchannel.h
   src/animationsampler.h
@@ -52,6 +55,9 @@ set(HEADERS
   src/gltfnamedobject.h
   src/gltfobject.h
   src/image.h
+  src/material.h
+  src/normaltextureinfo.h
+  src/occlusiontextureinfo.h
   src/orthographiccamera.h
   src/sparseindices.h
   src/sparsevalues.h
