@@ -2,6 +2,7 @@
 #define ANIMATIONSAMPLER_H
 
 #include "gltfobject.h"
+#include "indexhelper.h"
 
 #include <memory>
 #include <string>
@@ -11,7 +12,7 @@ namespace gltfloader
 
 class GLTFAccessor;
 
-enum GLTFInterpolationMethod
+enum class GLTFInterpolationMethod
 {
   none,
   step,
@@ -22,9 +23,9 @@ enum GLTFInterpolationMethod
 class GLTFAnimationSampler : public GLTFObject
 {
 private:
-  std::shared_ptr<GLTFAccessor> m_input;
+  size_t m_input;
   GLTFInterpolationMethod m_interpolation;
-  std::shared_ptr<GLTFAccessor> m_output;
+  size_t m_output;
 
   GLTFAnimationSampler ();
 
@@ -32,13 +33,12 @@ public:
   GLTFAnimationSampler (const GLTFAnimationSampler &) = delete;
   virtual ~GLTFAnimationSampler () {}
 
-  const std::shared_ptr<GLTFAccessor> &input () const;
-  const std::shared_ptr<GLTFAccessor> &output () const;
+  size_t input () const;
+  size_t output () const;
   GLTFInterpolationMethod interpolation () const;
 
   static std::shared_ptr<GLTFAnimationSampler>
-  create (const std::shared_ptr<GLTFAccessor> &input,
-          const std::shared_ptr<GLTFAccessor> &output,
+  create (const IndexHelper &helper, int input, int output,
           const std::string &interpolation = "LINEAR");
 };
 

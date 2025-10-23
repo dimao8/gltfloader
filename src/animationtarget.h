@@ -2,6 +2,7 @@
 #define ANIMATIONTARGET_H
 
 #include "gltfobject.h"
+#include "indexhelper.h"
 
 #include <memory>
 #include <string>
@@ -11,7 +12,7 @@ namespace gltfloader
 
 class GLTFNode;
 
-enum GLTFAnimationPath
+enum class GLTFAnimationPath
 {
   translation,
   rotation,
@@ -22,7 +23,7 @@ enum GLTFAnimationPath
 class GLTFAnimationTarget : public GLTFObject
 {
 private:
-  std::shared_ptr<GLTFNode> m_node;
+  size_t m_node;
   GLTFAnimationPath m_path;
 
   GLTFAnimationTarget ();
@@ -31,9 +32,14 @@ public:
   GLTFAnimationTarget (const GLTFAnimationTarget &) = delete;
   virtual ~GLTFAnimationTarget () {}
 
+  size_t node () const;
+  GLTFAnimationPath path () const;
+
   static std::shared_ptr<GLTFAnimationTarget>
-  create (const std::shared_ptr<GLTFNode> &node, const std::string &path);
+  create (const IndexHelper &helper, int node, const std::string &path);
 };
+
+bool operator== (const GLTFAnimationTarget &t1, const GLTFAnimationTarget &t2);
 
 }
 

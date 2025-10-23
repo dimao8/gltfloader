@@ -3,6 +3,7 @@
 
 #include "gltfobject.h"
 
+#include <array>
 #include <memory>
 #include <string>
 
@@ -16,6 +17,9 @@ private:
   std::string m_generator;
   std::string m_version;
   std::string m_min_version;
+
+  std::array<size_t, 2> m_version_int;
+  std::array<size_t, 2> m_min_version_int;
 
   GLTFAsset ();
 

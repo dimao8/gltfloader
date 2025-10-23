@@ -14,7 +14,7 @@ GLTFAnimationChannel::GLTFAnimationChannel () : GLTFObject ()
 
 /* ********************* GLTFAnimationChannel::sampler ********************* */
 
-const std::shared_ptr<GLTFAnimationSampler> &
+size_t
 GLTFAnimationChannel::sampler () const
 {
   return m_sampler;
@@ -32,14 +32,15 @@ GLTFAnimationChannel::target () const
 
 std::shared_ptr<GLTFAnimationChannel>
 GLTFAnimationChannel::create (
-    const std::shared_ptr<GLTFAnimationSampler> &sampler,
+    const IndexHelper &helper, int sampler,
     const std::shared_ptr<GLTFAnimationTarget> &target)
 {
   std::shared_ptr<GLTFAnimationChannel> tmp (new GLTFAnimationChannel ());
 
-  if (sampler == nullptr)
+  if (sampler < 0)
     {
-      std::cout << "[W] glTF 2.0: Animation channel must contain valid sampler"
+      std::cout << "[W] glTF 2.0 5.6.1: animation.channels[n].sampler can not "
+                   "be negative"
                 << std::endl;
       return nullptr;
     }
@@ -47,8 +48,9 @@ GLTFAnimationChannel::create (
 
   if (target == nullptr)
     {
-      std::cout << "[W] glTF 2.0: Animation channel must contain valid target"
-                << std::endl;
+      std::cout
+          << "[W] glTF 2.0 5.6.2: animation.channels[n].target must must exist"
+          << std::endl;
       return nullptr;
     }
   tmp->m_target = target;

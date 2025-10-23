@@ -2,6 +2,7 @@
 #define ACCESSORSPARSE_H
 
 #include "gltfobject.h"
+#include "indexhelper.h"
 
 #include <memory>
 
@@ -31,7 +32,8 @@ public:
   const std::shared_ptr<GLTFAccessorSparseIndices> &indices () const;
 
   static std::shared_ptr<GLTFAccessorSparse>
-  create (int count, const std::shared_ptr<GLTFAccessorSparseIndices> &indices,
+  create (const IndexHelper &helper, int count,
+          const std::shared_ptr<GLTFAccessorSparseIndices> &indices,
           const std::shared_ptr<GLTFAccessorSparseValues> &values);
 };
 

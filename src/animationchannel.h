@@ -2,6 +2,7 @@
 #define ANIMATIONCHANNEL_H
 
 #include "gltfobject.h"
+#include "indexhelper.h"
 
 #include <memory>
 
@@ -14,7 +15,7 @@ class GLTFAnimationTarget;
 class GLTFAnimationChannel : GLTFObject
 {
 private:
-  std::shared_ptr<GLTFAnimationSampler> m_sampler;
+  size_t m_sampler;
   std::shared_ptr<GLTFAnimationTarget> m_target;
 
   GLTFAnimationChannel ();
@@ -24,11 +25,11 @@ public:
 
   virtual ~GLTFAnimationChannel () {}
 
-  const std::shared_ptr<GLTFAnimationSampler> &sampler () const;
+  size_t sampler () const;
   const std::shared_ptr<GLTFAnimationTarget> &target () const;
 
   static std::shared_ptr<GLTFAnimationChannel>
-  create (const std::shared_ptr<GLTFAnimationSampler> &sampler,
+  create (const IndexHelper &helper, int sampler,
           const std::shared_ptr<GLTFAnimationTarget> &target);
 };
 

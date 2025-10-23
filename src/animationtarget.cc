@@ -16,16 +16,22 @@ GLTFAnimationTarget::GLTFAnimationTarget () : GLTFObject ()
 /* ********************** GLTFAnimationTarget::create ********************** */
 
 std::shared_ptr<GLTFAnimationTarget>
-GLTFAnimationTarget::create (const std::shared_ptr<GLTFNode> &node,
+GLTFAnimationTarget::create (const IndexHelper &helper, int node,
                              const std::string &path)
 {
   std::shared_ptr<GLTFAnimationTarget> tmp (new GLTFAnimationTarget ());
 
-  if (!node)
+  if (node < 0)
     {
-      std::cout
-          << "[W] glTF 2.0: The Animation target field must contain valid node"
-          << std::endl;
+      std::cout << "[W] glTF 2.0 5.7.1: animation.channel[n].target.node >= 0"
+                << std::endl;
+      return nullptr;
+    }
+  if (node >= helper.nodes_size ())
+    {
+      std::cout << "[W] glTF 2.0 5.7.1: animation.channel[n].target.node is "
+                   "out of range"
+                << std::endl;
       return nullptr;
     }
   tmp->m_node = node;
@@ -40,14 +46,38 @@ GLTFAnimationTarget::create (const std::shared_ptr<GLTFNode> &node,
     tmp->m_path = GLTFAnimationPath::weights;
   else
     {
-      std::cout << "[W] glTF 2.0: The Path field in animation targets must "
-                   "contain one of the following values: \"translation\", "
-                   "\"rotation\", \"scale\" or \"weights\""
-                << std::endl;
+      std::cout
+          << "[W] glTF 2.0 5.7.2: animation.channels[n].target.path can only "
+             "be \"translation\", \"rotation\", \"scale\" or \"weights\""
+          << std::endl;
       return nullptr;
     }
 
   return tmp;
+}
+
+/* *********************** GLTFAnimationTarget::node *********************** */
+
+size_t
+GLTFAnimationTarget::node () const
+{
+  return m_node;
+}
+
+/* *********************** GLTFAnimationTarget::path *********************** */
+
+GLTFAnimationPath
+GLTFAnimationTarget::path () const
+{
+  return m_path;
+}
+
+/* ******************************* operator== ****************************** */
+
+bool
+operator== (const GLTFAnimationTarget &t1, const GLTFAnimationTarget &t2)
+{
+  return (t1.node () == t2.node ()) && (t1.path () == t2.path ());
 }
 
 }

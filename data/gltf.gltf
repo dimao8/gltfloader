@@ -1,13 +1,45 @@
 {
-  "asset" : {
-    "version" : "2.0",
+  "asset": {
+    "version": "2.0",
     "generator": "Be my guest"
   },
-  "cameras" : [
+  "buffers": [
     {
-      "name" : "Camera Perspective 001",
-      "type" : "perspective",
-      "perspective" : {
+      "name": "Buffer001",
+      "byteLength": 48,
+      "uri": "gltf.bin"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 48,
+      "byteOffset": 0
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "type": "VEC3",
+      "count": 4,
+      "min": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "cameras": [
+    {
+      "name": "Camera Perspective 001",
+      "type": "perspective",
+      "perspective": {
         "aspectRatio": 1.666666666,
         "yfov": 0.7854,
         "znear": 0.5,
@@ -15,9 +47,9 @@
       }
     },
     {
-      "name" : "Camera Orthographic 002",
-      "type" : "orthographic",
-      "orthographic" : {
+      "name": "Camera Orthographic 002",
+      "type": "orthographic",
+      "orthographic": {
         "xmag": -1,
         "ymag": 1,
         "znear": 1,
@@ -27,8 +59,8 @@
   ],
   "nodes": [
     {
-      "name" : "Camera 001 node",
-      "camera" : 0,
+      "name": "Camera 001 node",
+      "camera": 0,
       "translation": [
         1,
         2,
@@ -36,22 +68,45 @@
       ]
     },
     {
-      "name" : "Camera 002 node",
-      "camera" : 1
+      "name": "Camera 002 node",
+      "camera": 1
     },
     {
-      "name" : "knot 001",
-      "children": [0, 1],
+      "name": "knot 001",
+      "children": [
+        0,
+        1,
+        3
+      ],
       "translation": [
         0,
         2,
         0
       ]
+    },
+    {
+      "name" : "Mesh 001",
+      "mesh" : 0
     }
   ],
   "scenes": [
     {
-      "nodes": [2]
+      "nodes": [
+        2
+      ]
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Mesh001",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0
+          },
+          "mode": 5
+        }
+      ]
     }
   ]
 }

@@ -2,6 +2,7 @@
 #define ANIMATION_H
 
 #include "gltfnamedobject.h"
+#include "indexhelper.h"
 
 #include <memory>
 #include <string>
@@ -15,11 +16,19 @@ class GLTFAnimationSampler;
 
 class GLTFAnimation : public GLTFNamedObject
 {
+public:
+  using GLTFChannelList = std::vector<std::shared_ptr<GLTFAnimationChannel> >;
+  using GLTFSamplerList = std::vector<std::shared_ptr<GLTFAnimationChannel> >;
+
 private:
-  std::vector<std::shared_ptr<GLTFAnimationChannel> > m_channels;
-  std::vector<std::shared_ptr<GLTFAnimationSampler> > m_samplers;
+  GLTFChannelList m_channels;
+  GLTFSamplerList m_samplers;
 
   GLTFAnimation (const std::string &name);
+
+  static bool
+  is_exist_twice (const std::shared_ptr<GLTFAnimationChannel> &target,
+                  const GLTFChannelList &list);
 
 public:
   GLTFAnimation () = delete;
@@ -27,12 +36,12 @@ public:
 
   virtual ~GLTFAnimation () {}
 
-  const std::vector<std::shared_ptr<GLTFAnimationChannel> > &channels () const;
+  const GLTFChannelList &channels () const;
+  const GLTFSamplerList &samplers () const;
 
   static std::shared_ptr<GLTFAnimation>
-  create (const std::string &name,
-          const std::vector<std::shared_ptr<GLTFAnimationChannel> > &channels,
-          const std::vector<std::shared_ptr<GLTFAnimationSampler> > &samplers);
+  create (const IndexHelper &helper, const std::string &name,
+          const GLTFChannelList &channels, const GLTFSamplerList &samplers);
 };
 
 }

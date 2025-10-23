@@ -88,6 +88,8 @@ public:
   ///
   const std::vector<uint8_t> &data () const;
 
+  size_t size () const;
+
   // Fabric creation methods
 
   ///

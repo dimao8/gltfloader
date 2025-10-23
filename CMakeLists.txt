@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 # Project
 project(gltfloader
-  VERSION 0.1.0.2
+  VERSION 0.1.0.3
   DESCRIPTION "glTF 2.0 loader"
   HOMEPAGE_URL ""
   LANGUAGES CXX
@@ -34,6 +34,7 @@ set(SOURCES
   src/gltfobject.cc
   src/image.cc
   src/material.cc
+  src/mesh.cc
   src/normaltextureinfo.cc
   src/occlusiontextureinfo.cc
   src/orthographiccamera.cc
@@ -56,6 +57,7 @@ set(HEADERS
   src/gltfobject.h
   src/image.h
   src/material.h
+  src/mesh.h
   src/normaltextureinfo.h
   src/occlusiontextureinfo.h
   src/orthographiccamera.h

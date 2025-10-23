@@ -2,6 +2,7 @@
 #define ACCESSOR_H
 
 #include "gltfnamedobject.h"
+#include "indexhelper.h"
 
 #include <memory>
 #include <vector>
@@ -9,18 +10,17 @@
 namespace gltfloader
 {
 
-enum GLTFAccessorComponentType
+enum class GLTFAccessorComponentType
 {
-  unknown = -1,
   byte = 5120,
   unsigned_byte = 5121,
-  shrt = 5122,
-  unsigned_shrt = 5123,
+  sshort = 5122,
+  unsigned_short = 5123,
   unsigned_int = 5125,
-  flt = 5126
+  ffloat = 5126
 };
 
-enum GLTFAccessorType
+enum class GLTFAccessorType
 {
   scalar,
   vec2,
@@ -37,7 +37,7 @@ class GLTFAccessorSparse;
 class GLTFAccessor : public GLTFNamedObject
 {
 private:
-  std::shared_ptr<GLTFBufferView> m_buffer_view;
+  size_t m_buffer_view;
   int m_byte_offset;
   GLTFAccessorComponentType m_component_type;
   GLTFAccessorType m_type;
@@ -45,11 +45,9 @@ private:
   int m_count;
   std::vector<float> m_min;
   std::vector<float> m_max;
-  std::vector<std::shared_ptr<GLTFAccessorSparse> > m_sparse;
+  std::shared_ptr<GLTFAccessorSparse> m_sparse;
 
   GLTFAccessor (const std::string &name);
-
-  bool is_bad () const;
 
 public:
   GLTFAccessor () = delete;
@@ -57,13 +55,26 @@ public:
 
   virtual ~GLTFAccessor () {}
 
-  static std::shared_ptr<GLTFAccessor> create (
-      const std::string &name, GLTFAccessorComponentType component_type,
-      int count, GLTFAccessorType type,
-      const std::shared_ptr<GLTFBufferView> &buffer_view = nullptr,
-      int byte_offset = 0, bool normalize = false,
-      const std::vector<float> &min = {}, const std::vector<float> &max = {},
-      const std::vector<std::shared_ptr<GLTFAccessorSparse> > &sparse = {});
+  size_t buffer_view () const;
+  int byte_offset () const;
+  GLTFAccessorComponentType component_type () const;
+  GLTFAccessorType type () const;
+  bool normalize () const;
+  int count () const;
+  const std::vector<float> &min () const;
+  const std::vector<float> &max () const;
+  const std::shared_ptr<GLTFAccessorSparse> &sparse () const;
+
+  static std::shared_ptr<GLTFAccessor>
+  create (const IndexHelper &helper, const std::string &name,
+          int component_type, int count, const std::string &type,
+          int buffer_view, int byte_offset = 0, bool normalize = false,
+          const std::vector<float> &min = {},
+          const std::vector<float> &max = {},
+          const std::shared_ptr<GLTFAccessorSparse> &sparse = nullptr);
+
+  static std::shared_ptr<GLTFAccessor> create (const IndexHelper &helper,
+                                               const std::string &name);
 };
 
 }

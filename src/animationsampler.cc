@@ -1,4 +1,5 @@
 #include "animationsampler.h"
+#include "indexhelper.h"
 
 #include <iostream>
 
@@ -14,7 +15,7 @@ GLTFAnimationSampler::GLTFAnimationSampler () : GLTFObject ()
 
 /* ********************** GLTFAnimationSampler::input ********************** */
 
-const std::shared_ptr<GLTFAccessor> &
+size_t
 GLTFAnimationSampler::input () const
 {
   return m_input;
@@ -22,7 +23,7 @@ GLTFAnimationSampler::input () const
 
 /* ********************** GLTFAnimationSampler::output ********************* */
 
-const std::shared_ptr<GLTFAccessor> &
+size_t
 GLTFAnimationSampler::output () const
 {
   return m_output;
@@ -39,32 +40,43 @@ GLTFAnimationSampler::interpolation () const
 /* ********************** GLTFAnimationSampler::create ********************* */
 
 std::shared_ptr<GLTFAnimationSampler>
-GLTFAnimationSampler::create (const std::shared_ptr<GLTFAccessor> &input,
-                              const std::shared_ptr<GLTFAccessor> &output,
+GLTFAnimationSampler::create (const IndexHelper &helper, int input, int output,
                               const std::string &interpolation)
 {
   std::shared_ptr<GLTFAnimationSampler> tmp (new GLTFAnimationSampler ());
 
-  if (!input)
+  if (input < 0)
     {
-      std::cout << "[W] glTF 2.0: The Animation target field must contain "
-                   "valid input accessor"
+      std::cout << "[W] glTF 2.0 5.8.1: animation.samplers[n].input >= 0"
                 << std::endl;
+      return nullptr;
+    }
+  if (input >= helper.accessors_size ())
+    {
+      std::cout
+          << "[W] glTF 2.0 5.8.1: animation.samplers[n].input is out of range"
+          << std::endl;
       return nullptr;
     }
   tmp->m_input = input;
 
-  if (!output)
+  if (output < 0)
     {
-      std::cout << "[W] glTF 2.0: The Animation target field must contain "
-                   "valid output accessor"
+      std::cout << "[W] glTF 2.0 5.8.3: animation.samplers[n].output >= 0"
                 << std::endl;
+      return nullptr;
+    }
+  if (output >= helper.accessors_size ())
+    {
+      std::cout
+          << "[W] glTF 2.0 5.8.3: animation.samplers[n].output is out of range"
+          << std::endl;
       return nullptr;
     }
   tmp->m_output = output;
 
   if (interpolation.empty ())
-    tmp->m_interpolation = GLTFInterpolationMethod::none;
+    tmp->m_interpolation = GLTFInterpolationMethod::linear;
   else if (interpolation == "STEP")
     tmp->m_interpolation = GLTFInterpolationMethod::step;
   else if (interpolation == "LINEAR")
@@ -73,10 +85,10 @@ GLTFAnimationSampler::create (const std::shared_ptr<GLTFAccessor> &input,
     tmp->m_interpolation = GLTFInterpolationMethod::cubic;
   else
     {
-      std::cout << "[W] glTF 2.0: The Path field in animation targets must "
-                   "contain one of the following values: \"STEP\", "
-                   "\"LINEAR\", \"CUBICSPLINE\" or be empty"
-                << std::endl;
+      std::cout
+          << "[W] glTF 2.0 5.8.2: animation.samplers[n].interpolation can "
+             "only be \"STEP\", \"LINEAR\", \"CUBICSPLINE\" or be empty"
+          << std::endl;
       return nullptr;
     }
 

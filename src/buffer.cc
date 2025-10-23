@@ -48,6 +48,14 @@ GLTFBuffer::data () const
   return m_data;
 }
 
+/* **************************** GLTFBuffer::size *************************** */
+
+size_t
+GLTFBuffer::size () const
+{
+  return m_data.size ();
+}
+
 /* *************************** GLTFBuffer::create ************************** */
 
 std::shared_ptr<GLTFBuffer>
