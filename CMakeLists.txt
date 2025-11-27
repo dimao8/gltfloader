@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.18)
 
 # Project
 project(gltfloader
-  VERSION 0.1.0.3
+  VERSION 0.1.0.4
   DESCRIPTION "glTF 2.0 loader"
   HOMEPAGE_URL ""
   LANGUAGES CXX
 )
+set(PACKAGE ${PROJECT_NAME})
+set(VERSION ${PROJECT_VERSION})
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -102,6 +104,12 @@ endif()
 # Check for jsonloader
 find_package(litejson)
 
+# Check for pngloader
+find_package(pngloader)
+
+# Check for jpegloader
+find_package(jpegloader)
+
 # Configuration
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Headers install directory")
 set(LIB_INSTALL_DIR lib/ CACHE PATH "Libraries install directory")
@@ -119,6 +127,9 @@ write_basic_package_version_file(
   COMPATIBILITY SameMajorVersion
 )
 
+# Docs
+add_subdirectory(doc)
+
 # Install
 install(
   TARGETS gltfloader
@@ -134,8 +145,6 @@ install(
 )
 
 # Config file
-set(PACKAGE ${PROJECT_NAME})
-set(VERSION ${PROJECT_VERSION})
 configure_file(
   ${CMAKE_SOURCE_DIR}/config.h.in
   ${CMAKE_BINARY_DIR}/config.h

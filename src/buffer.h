@@ -26,11 +26,6 @@ namespace gltfloader
 /// file via \c path argument to load it's content into the internal storage
 /// of the glTF buffer object.
 ///
-/// For Base64 embedded data there are two overloaded constructors with that
-/// accepts the raw data:
-/// - GLTFBuffer (const std::string &name, const std::vector<uint8_t> &data)
-/// - GLTFBuffer (const std::string &name, const uint8_t *data, size_t sz)
-///
 /// All constructors have \c name argument that can store optional glTF object
 /// name. If there is no name, pass an empty string through this argument.
 /// GLTFBuffer class will generate name based on UUID.
@@ -56,12 +51,6 @@ private:
   /// \param [in] name -- glTF name of the buffer object
   ///
   GLTFBuffer (const std::string &name);
-
-  ///
-  /// \brief Check buffer for correctness
-  /// \return Return true if GLTFBuffer object is valid buffer
-  ///
-  bool is_bad () const;
 
   ///
   /// \brief Set data
@@ -91,22 +80,6 @@ public:
   size_t size () const;
 
   // Fabric creation methods
-
-  ///
-  /// \brief Create glTF 2.0 buffer from data array
-  ///
-  /// This function is usually used for export, not for .gltf import.
-  ///
-  static std::shared_ptr<GLTFBuffer> create (const std::string &name,
-                                             const std::vector<uint8_t> &data);
-
-  ///
-  /// \brief Create glTF 2.0 buffer from data array
-  ///
-  /// This function is usually used for export, not for .gltf import.
-  ///
-  static std::shared_ptr<GLTFBuffer> create (const std::string &name,
-                                             const uint8_t *data, size_t sz);
 
   ///
   /// \brief Create glTF 2.0 buffer from file or Base64 string

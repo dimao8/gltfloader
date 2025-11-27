@@ -2,6 +2,7 @@
 #define IMAGE_H
 
 #include "gltfnamedobject.h"
+#include "indexhelper.h"
 
 #include <cstdint>
 #include <memory>
@@ -16,11 +17,10 @@ class GLTFBufferView;
 ///
 /// \brief MIME type enumerator
 ///
-enum GLTFImageMIMEType
+enum class GLTFImageMIMEType
 {
-  png,    ///< image/png
-  jpeg,   ///< image/jpeg
-  unknown ///< unknown type
+  png, ///< image/png
+  jpeg ///< image/jpeg
 };
 
 ///
@@ -68,12 +68,9 @@ private:
   GLTFImageMIMEType m_mime_type;
   std::string m_path;
   std::vector<uint8_t> m_data;
-  std::shared_ptr<GLTFBufferView> m_buffer_view;
+  size_t m_buffer_view;
 
   GLTFImage (const std::string &name);
-
-  void set (const uint8_t *data, size_t sz);
-  bool is_bad () const;
 
 public:
   GLTFImage () = delete;
@@ -81,17 +78,16 @@ public:
 
   virtual ~GLTFImage () {}
 
+  // TODO : Move mime type to the separate file
   GLTFImageMIMEType mime_type () const;
   const std::string &path () const;
   const std::vector<uint8_t> &data () const;
-  const std::shared_ptr<GLTFBufferView> buffer_view () const;
+  size_t data_size () const;
+  size_t buffer_view () const;
 
-  static const std::shared_ptr<GLTFImage> create (const std::string &name,
-                                                  GLTFImageMIMEType mime_type,
-                                                  const std::string &uri);
   static const std::shared_ptr<GLTFImage>
-  create (const std::string &name, GLTFImageMIMEType mime_type,
-          const std::shared_ptr<GLTFBufferView> buffer_view);
+  create (const IndexHelper &helper, const std::string &name, int buffer_view,
+          const std::string &mime_type, const std::string &uri);
 };
 
 }

@@ -17,7 +17,7 @@ GLTFBufferView::GLTFBufferView (const std::string &name)
 
 /* ************************* GLTFBufferView::buffer ************************ */
 
-const std::shared_ptr<GLTFBuffer> &
+size_t
 GLTFBufferView::buffer () const
 {
   return m_buffer;
@@ -31,28 +31,32 @@ GLTFBufferView::target () const
   return m_target;
 }
 
-/* ************************* GLTFBufferView::is_bad ************************ */
-
-bool
-GLTFBufferView::is_bad () const
-{
-  return m_buffer == nullptr;
-}
-
 /* ************************* GLTFBufferView::create ************************ */
 
 std::shared_ptr<GLTFBufferView>
-GLTFBufferView::create (const std::string &name,
-                        const std::shared_ptr<GLTFBuffer> &buffer,
-                        GLTFBufferViewTarget target, int byte_offset,
+GLTFBufferView::create (const IndexHelper &helper, const std::string &name,
+                        int buffer, int target, int byte_offset,
                         int byte_length, int byte_stride)
 {
   std::shared_ptr<GLTFBufferView> tmp (new GLTFBufferView (name));
 
+  if (buffer < 0)
+    {
+      std::cout << "[W] glTF 2.0 5.11.1: bufferView.buffer >= 0" << std::endl;
+      return nullptr;
+    }
+  if (buffer >= helper.buffers_size ())
+    {
+      std::cout << "[W] glTF 2.0 5.11.1: bufferView.buffer is out of range"
+                << std::endl;
+      return nullptr;
+    }
+  tmp->m_buffer = buffer;
+
   if (byte_offset < 0)
     {
-      std::cout << "[W] glTF 2.0: Byte offset of the bufferView \""
-                << tmp->name () << "\" can not be negative" << std::endl;
+      std::cout << "[W] glTF 2.0 5.11.2: bufferView.byteOffset >= 0"
+                << std::endl;
       return nullptr;
     }
   else
@@ -60,8 +64,8 @@ GLTFBufferView::create (const std::string &name,
 
   if (byte_length < 1)
     {
-      std::cout << "[W] glTF 2.0: The size of the bufferView \""
-                << tmp->name () << "\" can not be less than 1" << std::endl;
+      std::cout << "[W] glTF 2.0 5.11.3: bufferView.byteLength > 0"
+                << std::endl;
       return nullptr;
     }
   else
@@ -69,18 +73,18 @@ GLTFBufferView::create (const std::string &name,
 
   if (byte_stride < 4 || byte_stride > 252)
     {
-      std::cout << "[W] glTF 2.0: The stride of the bufferView \""
-                << tmp->name () << "\" must fit [4,252] range" << std::endl;
+      std::cout
+          << "[W] glTF 2.0 5.11.4: bufferView.byteStride in range [4, 252]"
+          << std::endl;
       return nullptr;
     }
   else
     tmp->m_byte_stride = byte_stride;
 
-  if (tmp->m_buffer->data ().size () < byte_length)
+  if (byte_length > helper.buffer (buffer)->size ())
     {
-      std::cout << "[W] glTF 2.0: The size of the bufferView \""
-                << tmp->name ()
-                << "\" can not be greater than buffer size" << std::endl;
+      std::cout << "[W] glTF 2.0: buffer is smaller than bufferView.byteLength"
+                << std::endl;
       return nullptr;
     }
 

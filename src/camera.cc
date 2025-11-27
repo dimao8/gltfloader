@@ -50,15 +50,15 @@ GLTFCamera::create (
     {
       if (!perspective)
         {
-          std::cout << "[W] glTF 2.0: The perspective field in \"" << name
-                    << "\" is missing, but type is set to \"perspective\""
+          std::cout << "[W] glTF 2.0 5.12.3: The camera.type set to "
+                       "\"perspective\" but no camera.perspective was found"
                     << std::endl;
           return nullptr;
         }
       if (orthographic)
         {
-          std::cout << "[W] glTF 2.0: The orthographic field in \"" << name
-                    << "\" is present, but type is set to \"perspective\""
+          std::cout << "[W] glTF 2.0 5.12.3: The camera.type set to "
+                       "\"perspective\" but camera.orthographic was found"
                     << std::endl;
           return nullptr;
         }
@@ -69,15 +69,15 @@ GLTFCamera::create (
     {
       if (!orthographic)
         {
-          std::cout << "[W] glTF 2.0: The orthographic field in \"" << name
-                    << "\" is missing, but type is set to \"orthographic\""
+          std::cout << "[W] glTF 2.0 5.12.3: The camera.type set to "
+                       "\"orthographic\" but no camera.orthographic was found"
                     << std::endl;
           return nullptr;
         }
       if (perspective)
         {
-          std::cout << "[W] glTF 2.0: The perspective field in \"" << name
-                    << "\" is present, but type is set to \"orthographic\""
+          std::cout << "[W] glTF 2.0 5.12.3: The camera.type set to "
+                       "\"orthographic\" but camera.perspective was found"
                     << std::endl;
           return nullptr;
         }

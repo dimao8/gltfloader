@@ -2,6 +2,7 @@
 #define BUFFERVIEW_H
 
 #include "gltfnamedobject.h"
+#include "indexhelper.h"
 
 #include <memory>
 #include <string>
@@ -11,9 +12,8 @@ namespace gltfloader
 
 class GLTFBuffer;
 
-enum GLTFBufferViewTarget
+enum class GLTFBufferViewTarget
 {
-  unknown = -1,
   array_buffer = 34962,
   element_array_buffer = 34963
 };
@@ -21,7 +21,7 @@ enum GLTFBufferViewTarget
 class GLTFBufferView : public GLTFNamedObject
 {
 private:
-  std::shared_ptr<GLTFBuffer> m_buffer;
+  size_t m_buffer;
   GLTFBufferViewTarget m_target;
   int m_byte_offset;
   int m_byte_length;
@@ -35,14 +35,13 @@ public:
 
   virtual ~GLTFBufferView () {}
 
-  const std::shared_ptr<GLTFBuffer> &buffer () const;
+  size_t buffer () const;
   GLTFBufferViewTarget target () const;
-  bool is_bad () const;
 
   static std::shared_ptr<GLTFBufferView>
-  create (const std::string &name, const std::shared_ptr<GLTFBuffer> &buffer,
-          GLTFBufferViewTarget target = GLTFBufferViewTarget::unknown,
-          int byte_offset = 0, int byte_length = 1, int byte_stride = 4);
+  create (const IndexHelper &helper, const std::string &name, int buffer,
+          int target, int byte_offset = 0, int byte_length = 1,
+          int byte_stride = 4);
 };
 
 }

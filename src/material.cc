@@ -39,7 +39,7 @@ GLTFMaterial::occlusion_texture () const
 
 /* ********************* GLTFMaterial::emissive_texture ******************** */
 
-const std::shared_ptr<GLTFTextureInfo> &
+size_t
 GLTFMaterial::emissive_texture () const
 {
   return m_emissive_texture;
@@ -85,14 +85,13 @@ GLTFMaterial::create (
     const std::shared_ptr<GLTFPBRMetallicRoughness> &pbr_metallic_roughness,
     const std::shared_ptr<GLTFNormalTextureInfo> &normal_texture,
     const std::shared_ptr<GLTFOcclusionTextureInfo> &occlusion_texture,
-    const std::shared_ptr<GLTFTextureInfo> &emissive_texture,
-    std::array<float, 3> emissive_factor, const std::string &alpha_mode,
-    float alpha_cutoff, bool double_sided)
+    int emissive_texture, std::array<float, 3> emissive_factor,
+    const std::string &alpha_mode, float alpha_cutoff, bool double_sided)
 {
   std::shared_ptr<GLTFMaterial> tmp (new GLTFMaterial (name));
   if (pbr_metallic_roughness == nullptr)
     {
-      // TODO : GLTFPBRMetallicRoughness class
+      // TODO : Check for default values necessity
       tmp->m_pbr_metallic_roughness = GLTFPBRMetallicRoughness::create ();
       std::cout << "[I] glTF 2.0: Set Metallic/Roughness texture for \""
                 << name << "\" object to default" << std::endl;
@@ -100,14 +99,16 @@ GLTFMaterial::create (
 
   tmp->m_normal_texture = normal_texture;
   tmp->m_occlusion_texture = occlusion_texture;
+
+  // TODO : Check for invalid emissive texture
   tmp->m_emissive_texture = emissive_texture;
 
   if ((emissive_factor[0] < 0.0f) || (emissive_factor[0] > 1.0f)
       || (emissive_factor[1] < 0.0f) || (emissive_factor[1] > 1.0f)
       || (emissive_factor[2] < 0.0f) || (emissive_factor[2] > 1.0f))
     {
-      std::cout << "[W] glTF 2.0: The emissive factor for \"" << name
-                << "\" object can have components from [0.0,1.0] range"
+      std::cout << "[W] glTF 2.0 5.19.8: material.emissiveFactor elements "
+                   "must be in range [0.0, 1.0]"
                 << std::endl;
       return nullptr;
     }
@@ -121,16 +122,16 @@ GLTFMaterial::create (
     tmp->m_alpha_mode = GLTFAlphaMode::blend;
   else
     {
-      std::cout << "[W] glTF 2.0: The alpha mode for \"" << name
-                << "\" object can be \"OPAQUE\", \"MASK\" or \"BLEND\""
+      std::cout << "[W] glTF 2.0 5.19.9:material.alphaMode can be only "
+                   "\"OPAQUE\", \"MASK\" or \"BLEND\""
                 << std::endl;
       return nullptr;
     }
 
   if (alpha_cutoff < 0.0f)
     {
-      std::cout << "[W] glTF 2.0: The alpha cutoff value for \"" << name
-                << "\" object can not be less than zero" << std::endl;
+      std::cout << "[W] glTF 2.0 5.19.10: material.alphaCutoff >= 0"
+                << std::endl;
       return nullptr;
     }
   tmp->m_alpha_cutoff = alpha_cutoff;

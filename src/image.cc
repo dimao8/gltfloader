@@ -16,22 +16,6 @@ GLTFImage::GLTFImage (const std::string &name) : GLTFNamedObject (name)
   //
 }
 
-/* ***************************** GLTFImage::set **************************** */
-
-void
-GLTFImage::set (const uint8_t *data, size_t sz)
-{
-  m_data.assign (data, data + sz);
-}
-
-/* *************************** GLTFImage::is_bad *************************** */
-
-bool
-GLTFImage::is_bad () const
-{
-  return (m_data.empty ()) && (m_buffer_view == nullptr);
-}
-
 /* ************************** GLTFImage::mime_type ************************* */
 
 GLTFImageMIMEType
@@ -56,9 +40,17 @@ GLTFImage::data () const
   return m_data;
 }
 
+/* ************************** GLTFImage::data_size ************************* */
+
+size_t
+GLTFImage::data_size () const
+{
+  return m_data.size ();
+}
+
 /* ************************* GLTFImage::buffer_view ************************ */
 
-const std::shared_ptr<GLTFBufferView>
+size_t
 GLTFImage::buffer_view () const
 {
   return m_buffer_view;
@@ -68,7 +60,8 @@ GLTFImage::buffer_view () const
 
 // FIXME : Boilerplate. See buffer.cc:85
 const std::shared_ptr<GLTFImage>
-GLTFImage::create (const std::string &name, GLTFImageMIMEType mime_type,
+GLTFImage::create (const IndexHelper &helper, const std::string &name,
+                   int buffer_view, const std::string &mime_type,
                    const std::string &uri)
 {
   std::shared_ptr<GLTFImage> tmp (new GLTFImage (name));
@@ -78,77 +71,83 @@ GLTFImage::create (const std::string &name, GLTFImageMIMEType mime_type,
 
   // TODO : Correct URI parsing
 
-  // Check for base64
-  size_t prefix = std::string::npos;
-
-  if (uri.find (prefix_str1) == 0)
-    prefix = prefix_str1.size ();
-  else if (uri.find (prefix_str2) == 0)
-    prefix = prefix_str2.size ();
-
-  if (prefix != std::string::npos)
+  if (uri.empty ()) // Only bufferView
     {
-      if (!base64_import (tmp->m_data, uri.substr (prefix)))
+      if (buffer_view < 0)
         {
-          std::cout << "[W] glTF 2.0: Expect base64 string in \"" << uri
-                    << "\"" << std::endl;
-          return nullptr;
-        }
-    }
-  else
-    {
-      std::ifstream file (uri);
-
-      if (!file)
-        {
-          std::cout << "[W] glTF 2.0: The file \"" << uri
-                    << "\" can not be read" << std::endl;
-          return nullptr;
-        }
-
-      file.seekg (0, std::ios_base::end);
-      size_t sz = file.tellg ();
-      file.seekg (0, std::ios_base::beg);
-
-      if (sz == 0)
-        {
-          std::cout << "[W] glTF 2.0: The file \"" << uri << "\" is empty"
+          std::cout << "[W] glTF 2.0 5.18.3: image.bufferView >= 0"
                     << std::endl;
           return nullptr;
         }
+      if (buffer_view >= helper.buffer_views_size ())
+        {
+          std::cout << "[W] glTF 2.0 5.18.3: image.bufferView is out of range"
+                    << std::endl;
+          return nullptr;
+        }
+      tmp->m_buffer_view = buffer_view;
 
-      tmp->m_data.reserve (sz);
-      tmp->m_data.assign (std::istreambuf_iterator<char> (file),
-                          std::istreambuf_iterator<char> ());
+      if (mime_type == "image/jpeg")
+        tmp->m_mime_type = GLTFImageMIMEType::jpeg;
+      else if (mime_type == "image/png")
+        tmp->m_mime_type = GLTFImageMIMEType::png;
+      else
+        {
+          std::cout << "[W] glTF 2.0 5.18.2: image.mimeType must present and "
+                       "can be \"image/jpeg\" or \"image/png\""
+                    << std::endl;
+          return nullptr;
+        }
     }
-
-  if (tmp->is_bad ())
-    return nullptr;
-  else
-    return tmp;
-}
-
-/* *************************** GLTFImage::create *************************** */
-
-const std::shared_ptr<GLTFImage>
-GLTFImage::create (const std::string &name, GLTFImageMIMEType mime_type,
-                   const std::shared_ptr<GLTFBufferView> buffer_view)
-{
-  std::shared_ptr<GLTFImage> tmp (new GLTFImage (name));
-
-  tmp->m_buffer_view = buffer_view;
-  if (mime_type == GLTFImageMIMEType::unknown)
+  else // Data in file or uri (Base64)
     {
-      std::cout << "[W] glTF 2.0: The image object \"" << tmp->name ()
-                << "\" can not have unknown type when bufferView is defined"
-                << std::endl;
-      return nullptr;
+      // Check for base64
+      size_t prefix = std::string::npos;
+
+      if (uri.find (prefix_str1) == 0)
+        prefix = prefix_str1.size ();
+      else if (uri.find (prefix_str2) == 0)
+        prefix = prefix_str2.size ();
+
+      if (prefix != std::string::npos)
+        {
+          if (!base64_import (tmp->m_data, uri.substr (prefix)))
+            {
+              std::cout
+                  << "[W] glTF 2.0 5.18.1: Can not decode Base64 in image.uri"
+                  << std::endl;
+              return nullptr;
+            }
+        }
+      else
+        {
+          std::ifstream file (uri);
+
+          if (!file)
+            {
+              std::cout << "[W] glTF 2.0 5.18.1: The file \"" << uri
+                        << "\" can not be read" << std::endl;
+              return nullptr;
+            }
+
+          file.seekg (0, std::ios_base::end);
+          size_t sz = file.tellg ();
+          file.seekg (0, std::ios_base::beg);
+
+          if (sz == 0)
+            {
+              std::cout << "[W] glTF 2.0 5.18.1: The file \"" << uri
+                        << "\" is empty" << std::endl;
+              return nullptr;
+            }
+
+          tmp->m_data.reserve (sz);
+          tmp->m_data.assign (std::istreambuf_iterator<char> (file),
+                              std::istreambuf_iterator<char> ());
+        }
     }
 
-  if (tmp->is_bad ())
-    return nullptr;
-  else
-    return tmp;
+  return tmp;
 }
 
 }

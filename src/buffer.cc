@@ -32,14 +32,6 @@ GLTFBuffer::path () const
   return m_path;
 }
 
-/* *************************** GLTFBuffer::is_bad ************************** */
-
-bool
-GLTFBuffer::is_bad () const
-{
-  return m_data.empty ();
-}
-
 /* **************************** GLTFBuffer::data *************************** */
 
 const std::vector<uint8_t> &
@@ -59,41 +51,10 @@ GLTFBuffer::size () const
 /* *************************** GLTFBuffer::create ************************** */
 
 std::shared_ptr<GLTFBuffer>
-GLTFBuffer::create (const std::string &name, const std::vector<uint8_t> &data)
-{
-  std::shared_ptr<GLTFBuffer> tmp (new GLTFBuffer (name));
-
-  tmp->set (data.data (), data.size ());
-  tmp->m_path = tmp->name () + ".bin";
-
-  if (tmp->is_bad ())
-    return nullptr;
-  else
-    return tmp;
-}
-
-/* *************************** GLTFBuffer::create ************************** */
-
-std::shared_ptr<GLTFBuffer>
-GLTFBuffer::create (const std::string &name, const uint8_t *data, size_t sz)
-{
-  std::shared_ptr<GLTFBuffer> tmp (new GLTFBuffer (name));
-
-  tmp->set (data, sz);
-  tmp->m_path = tmp->name () + ".bin";
-
-  if (tmp->is_bad ())
-    return nullptr;
-  else
-    return tmp;
-}
-
-/* *************************** GLTFBuffer::create ************************** */
-
-std::shared_ptr<GLTFBuffer>
 GLTFBuffer::create (const std::string &name, const std::string &uri)
 {
   std::shared_ptr<GLTFBuffer> tmp (new GLTFBuffer (name));
+
   const std::string prefix_str1 = "data:application/octet-stream;base64,";
   const std::string prefix_str2 = "data:application/gltf-buffer;base64,";
 
@@ -111,8 +72,8 @@ GLTFBuffer::create (const std::string &name, const std::string &uri)
     {
       if (!base64_import (tmp->m_data, uri.substr (prefix)))
         {
-          std::cout << "[W] glTF 2.0: Expect base64 string in \"" << name
-                    << "\"" << std::endl;
+          std::cout << "[W] glTF 2.0 5.10.1: Expect base64 string"
+                    << std::endl;
           return nullptr;
         }
     }
@@ -122,7 +83,7 @@ GLTFBuffer::create (const std::string &name, const std::string &uri)
 
       if (!file)
         {
-          std::cout << "[W] glTF 2.0: The file \"" << uri
+          std::cout << "[W] glTF 2.0 5.10.1: The file \"" << uri
                     << "\" can not be read" << std::endl;
           return nullptr;
         }
@@ -133,8 +94,8 @@ GLTFBuffer::create (const std::string &name, const std::string &uri)
 
       if (sz == 0)
         {
-          std::cout << "[W] glTF 2.0: The file \"" << uri << "\" is empty"
-                    << std::endl;
+          std::cout << "[W] glTF 2.0 5.10.1: The file \"" << uri
+                    << "\" is empty" << std::endl;
           return nullptr;
         }
 
@@ -143,10 +104,7 @@ GLTFBuffer::create (const std::string &name, const std::string &uri)
                           std::istreambuf_iterator<char> ());
     }
 
-  if (tmp->is_bad ())
-    return nullptr;
-  else
-    return tmp;
+  return (tmp->m_data.empty () ? nullptr : tmp);
 }
 
 }

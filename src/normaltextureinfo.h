@@ -2,6 +2,7 @@
 #define NORMALTEXTUREINFO_H
 
 #include "gltfobject.h"
+#include "indexhelper.h"
 
 #include <memory>
 
@@ -16,8 +17,8 @@ class GLTFPrimitiveAttribute;
 class GLTFNormalTextureInfo : public GLTFObject
 {
 private:
-  std::shared_ptr<GLTFTexture> m_index;
-  std::shared_ptr<GLTFPrimitiveAttribute> m_attribute_index;
+  size_t m_index;
+  size_t m_texcoord;
   float m_scale;
 
   GLTFNormalTextureInfo ();
@@ -26,13 +27,12 @@ public:
   GLTFNormalTextureInfo (const GLTFNormalTextureInfo &) = delete;
   virtual ~GLTFNormalTextureInfo () {}
 
-  const std::shared_ptr<GLTFTexture> &index () const;
-  const std::shared_ptr<GLTFPrimitiveAttribute> &attribute_index () const;
+  size_t index () const;
+  size_t texcoord () const;
   float scale () const;
 
   static std::shared_ptr<GLTFNormalTextureInfo>
-  create (const std::shared_ptr<GLTFTexture> &index,
-          const std::shared_ptr<GLTFPrimitiveAttribute> &attribute_index,
+  create (const IndexHelper &helper, int index, int texcoord = 0,
           float scale = 1.0f);
 };
 

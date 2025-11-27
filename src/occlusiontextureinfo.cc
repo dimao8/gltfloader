@@ -14,18 +14,18 @@ GLTFOcclusionTextureInfo::GLTFOcclusionTextureInfo () : GLTFObject ()
 
 /* ******************** GLTFOcclusionTextureInfo::index ******************** */
 
-const std::shared_ptr<GLTFTexture> &
+size_t
 GLTFOcclusionTextureInfo::index () const
 {
   return m_index;
 }
 
-/* *************** GLTFOcclusionTextureInfo::attribute_index *************** */
+/* ******************* GLTFOcclusionTextureInfo::texcoord ****************** */
 
-const std::shared_ptr<GLTFPrimitiveAttribute> &
-GLTFOcclusionTextureInfo::attribute_index () const
+size_t
+GLTFOcclusionTextureInfo::texcoord () const
 {
-  return m_attribute_index;
+  return m_texcoord;
 }
 
 /* ******************** GLTFOcclusionTextureInfo::scale ******************** */
@@ -39,41 +39,36 @@ GLTFOcclusionTextureInfo::strength () const
 /* ******************** GLTFOcclusionTextureInfo::create ******************* */
 
 std::shared_ptr<GLTFOcclusionTextureInfo>
-GLTFOcclusionTextureInfo::create (
-    const std::shared_ptr<GLTFTexture> &index,
-    const std::shared_ptr<GLTFPrimitiveAttribute> &attribute_index,
-    float strength)
+GLTFOcclusionTextureInfo::create (const IndexHelper &helper, int index,
+                                  int texcoord, float strength)
 {
   std::shared_ptr<GLTFOcclusionTextureInfo> tmp (
       new GLTFOcclusionTextureInfo ());
 
-  if (index == nullptr)
+  if (index < 0)
     {
-      std::cout << "[W] glTF 2.0: The index value in occlusion texture info "
-                   "object MUST link to valid texture"
+      std::cout
+          << "[W] glTF 2.0 5.21.1: material.occlusionTextureInfo.index >= 0"
+          << std::endl;
+      return nullptr;
+    }
+  if (index >= helper.textures_size ())
+    {
+      std::cout << "[W] glTF 2.0 5.21.1: material.occlusionTextureInfo.index "
+                   "is out of range"
                 << std::endl;
       return nullptr;
     }
   tmp->m_index = index;
 
-  // FIXME : Delete this after migration to the index-based arguments
-  if (attribute_index == nullptr)
+  if (texcoord < 0)
     {
-      std::cout << "[W] glTF 2.0: The attribute index value in occlusion "
-                   "texture info object MUST link to valid primitive "
-                   "attribute (TEXCOORD)"
+      std::cout << "[W] glTF 2.0 5.21.2: material.normalTexture.texCoord >= 0"
                 << std::endl;
       return nullptr;
     }
-  tmp->m_attribute_index = attribute_index;
+  tmp->m_texcoord = texcoord;
 
-  if ((strength < 0.0f) || (strength > 1.0f))
-    {
-      std::cout << "[W] glTF 2.0: The strength value in occlusion texture "
-                   "info object MUST fit into [0.0, 1.0] range"
-                << std::endl;
-      return nullptr;
-    }
   tmp->m_strength = strength;
 
   return tmp;

@@ -14,18 +14,18 @@ GLTFNormalTextureInfo::GLTFNormalTextureInfo () : GLTFObject ()
 
 /* ********************** GLTFNormalTextureInfo::index ********************* */
 
-const std::shared_ptr<GLTFTexture> &
+size_t
 GLTFNormalTextureInfo::index () const
 {
   return m_index;
 }
 
-/* ***************** GLTFNormalTextureInfo::attribute_index **************** */
+/* ******************** GLTFNormalTextureInfo::texcoord ******************** */
 
-const std::shared_ptr<GLTFPrimitiveAttribute> &
-GLTFNormalTextureInfo::attribute_index () const
+size_t
+GLTFNormalTextureInfo::texcoord () const
 {
-  return m_attribute_index;
+  return m_texcoord;
 }
 
 /* ********************** GLTFNormalTextureInfo::scale ********************* */
@@ -39,32 +39,33 @@ GLTFNormalTextureInfo::scale () const
 /* ********************* GLTFNormalTextureInfo::create ********************* */
 
 std::shared_ptr<GLTFNormalTextureInfo>
-GLTFNormalTextureInfo::create (
-    const std::shared_ptr<GLTFTexture> &index,
-    const std::shared_ptr<GLTFPrimitiveAttribute> &attribute_index,
-    float scale)
+GLTFNormalTextureInfo::create (const IndexHelper &helper, int index,
+                               int texcoord, float scale)
 {
   std::shared_ptr<GLTFNormalTextureInfo> tmp (new GLTFNormalTextureInfo ());
 
-  if (index == nullptr)
+  if (index < 0)
     {
-      std::cout << "[W] glTF 2.0: The index value in normal texture info "
-                   "object MUST link to valid texture"
+      std::cout << "[W] glTF 2.0 5.20.1: material.normalTexture.index >= 0"
+                << std::endl;
+      return nullptr;
+    }
+  if (index >= helper.textures_size ())
+    {
+      std::cout << "[W] glTF 2.0 5.20.1: material.normalTexture.index is out "
+                   "of range"
                 << std::endl;
       return nullptr;
     }
   tmp->m_index = index;
 
-  // FIXME : Delete this after migration to the index-based arguments
-  if (attribute_index == nullptr)
+  if (texcoord < 0)
     {
-      std::cout
-          << "[W] glTF 2.0: The attribute index value in normal texture info "
-             "object MUST link to valid primitive attribute (TEXCOORD)"
-          << std::endl;
+      std::cout << "[W] glTF 2.0 5.20.2: material.normalTexture.texCoord >= 0"
+                << std::endl;
       return nullptr;
     }
-  tmp->m_attribute_index = attribute_index;
+  tmp->m_texcoord = texcoord;
 
   tmp->m_scale = scale;
   return tmp;

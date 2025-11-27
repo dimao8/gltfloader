@@ -21,6 +21,7 @@ GLTFPrimitive::create (const GLTFAttributeList &attributes, int index,
 {
   std::shared_ptr<GLTFPrimitive> tmp (new GLTFPrimitive ());
 
+  // TODO : Check for TEXTURE object
   if (attributes.empty ())
     {
       std::cout << "[W] glTF 2.0: Mesh object must have at least one "

@@ -12,7 +12,7 @@ namespace gltfloader
 class GLTFOrthographicCamera;
 class GLTFPerspectiveCamera;
 
-enum GLTFCameraType
+enum class GLTFCameraType
 {
   orthographic,
   perspective

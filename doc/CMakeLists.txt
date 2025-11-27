@@ -1,0 +1,24 @@
+find_program(DOXYGEN doxygen)
+
+if(DOXYGEN)
+set(DOXYGEN_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doxygen)
+set(DOXYGEN_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/doxygen)
+set(DOXYGEN_SCAN_DIRS_LIST
+  ${CMAKE_SOURCE_DIR}/README.md
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/doxygen
+)
+list(JOIN DOXYGEN_SCAN_DIRS_LIST " " DOXYGEN_SCAN_DIRS)
+set(MAINPAGE ${CMAKE_SOURCE_DIR}/README.md)
+
+configure_file(${DOXYGEN_SOURCE_DIR}/Doxyfile.in
+  ${DOXYGEN_BINARY_DIR}/Doxyfile
+  @ONLY
+)
+
+add_custom_target(html
+  doxygen ${DOXYGEN_BINARY_DIR}/Doxyfile
+  DEPENDS ${DOXYGEN_BINARY_DIR}/Doxyfile
+)
+endif()
