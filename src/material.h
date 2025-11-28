@@ -2,9 +2,12 @@
 #define MATERIAL_H
 
 #include "gltfnamedobject.h"
+#include "gltftypes.h"
+#include "indexhelper.h"
 
 #include <array>
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace gltfloader
@@ -14,13 +17,6 @@ class GLTFPBRMetallicRoughness;
 class GLTFNormalTextureInfo;
 class GLTFOcclusionTextureInfo;
 class GLTFTextureInfo;
-
-enum class GLTFAlphaMode
-{
-  opaque,
-  mask,
-  blend
-};
 
 class GLTFMaterial : public GLTFNamedObject
 {
@@ -52,13 +48,13 @@ public:
   bool double_sided () const;
 
   static std::shared_ptr<GLTFMaterial> create (
-      const std::string &name,
+      const std::string &name, const IndexHelper &helper,
       const std::shared_ptr<GLTFPBRMetallicRoughness> &pbr_metallic_roughness
       = nullptr,
       const std::shared_ptr<GLTFNormalTextureInfo> &normal_texture = nullptr,
       const std::shared_ptr<GLTFOcclusionTextureInfo> &occlusion_texture
       = nullptr,
-      int emissive_texture = -1,
+      const std::optional<int> &emissive_texture = std::nullopt,
       std::array<float, 3> emissive_factor = { 0.0f, 0.0f, 0.0f },
       const std::string &alpha_mode = "OPAQUE", float alpha_cutoff = 0.5f,
       bool double_sided = false);

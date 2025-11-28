@@ -2,6 +2,7 @@
 #include "pbrmetallicroughness.h"
 
 #include <iostream>
+#include <optional>
 
 namespace gltfloader
 {
@@ -81,12 +82,13 @@ GLTFMaterial::double_sided () const
 
 std::shared_ptr<GLTFMaterial>
 GLTFMaterial::create (
-    const std::string &name,
+    const std::string &name, const IndexHelper &helper,
     const std::shared_ptr<GLTFPBRMetallicRoughness> &pbr_metallic_roughness,
     const std::shared_ptr<GLTFNormalTextureInfo> &normal_texture,
     const std::shared_ptr<GLTFOcclusionTextureInfo> &occlusion_texture,
-    int emissive_texture, std::array<float, 3> emissive_factor,
-    const std::string &alpha_mode, float alpha_cutoff, bool double_sided)
+    const std::optional<int> &emissive_texture,
+    std::array<float, 3> emissive_factor, const std::string &alpha_mode,
+    float alpha_cutoff, bool double_sided)
 {
   std::shared_ptr<GLTFMaterial> tmp (new GLTFMaterial (name));
   if (pbr_metallic_roughness == nullptr)
@@ -100,8 +102,10 @@ GLTFMaterial::create (
   tmp->m_normal_texture = normal_texture;
   tmp->m_occlusion_texture = occlusion_texture;
 
-  // TODO : Check for invalid emissive texture
-  tmp->m_emissive_texture = emissive_texture;
+  if (emissive_texture == std::nullopt)
+    tmp->m_emissive_texture = helper.default_material_emissive_texture_info ();
+  else
+    tmp->m_emissive_texture = emissive_texture.value ();
 
   if ((emissive_factor[0] < 0.0f) || (emissive_factor[0] > 1.0f)
       || (emissive_factor[1] < 0.0f) || (emissive_factor[1] > 1.0f)
@@ -134,7 +138,10 @@ GLTFMaterial::create (
                 << std::endl;
       return nullptr;
     }
-  tmp->m_alpha_cutoff = alpha_cutoff;
+  else if (alpha_cutoff > 1.0f)
+    tmp->m_alpha_cutoff = 1.0f;
+  else
+    tmp->m_alpha_cutoff = alpha_cutoff;
 
   tmp->m_double_sided = double_sided;
 

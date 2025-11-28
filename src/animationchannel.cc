@@ -44,7 +44,7 @@ GLTFAnimationChannel::create (
                 << std::endl;
       return nullptr;
     }
-  tmp->m_sampler = sampler;
+  tmp->m_sampler = sampler + helper.sampler_defaults_size();
 
   if (target == nullptr)
     {

@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <fstream>
 #include <iostream>
+#include <optional>
 
 namespace gltfloader
 {
@@ -50,7 +51,7 @@ GLTFImage::data_size () const
 
 /* ************************* GLTFImage::buffer_view ************************ */
 
-size_t
+const std::optional<size_t> &
 GLTFImage::buffer_view () const
 {
   return m_buffer_view;
@@ -61,8 +62,8 @@ GLTFImage::buffer_view () const
 // FIXME : Boilerplate. See buffer.cc:85
 const std::shared_ptr<GLTFImage>
 GLTFImage::create (const IndexHelper &helper, const std::string &name,
-                   int buffer_view, const std::string &mime_type,
-                   const std::string &uri)
+                   const std::optional<int> &buffer_view,
+                   const std::string &mime_type, const std::string &uri)
 {
   std::shared_ptr<GLTFImage> tmp (new GLTFImage (name));
 
@@ -70,22 +71,32 @@ GLTFImage::create (const IndexHelper &helper, const std::string &name,
   const std::string prefix_str2 = "data:application/gltf-buffer;base64,";
 
   // TODO : Correct URI parsing
+  // FIXME : Buffer URI boilerplate
 
   if (uri.empty ()) // Only bufferView
     {
+      if (buffer_view == std::nullopt)
+        {
+          std::cout << "[W] glTF 2.0 5.18.1: image.bufferView must be defined "
+                       "with empty URI"
+                    << std::endl;
+          return nullptr;
+        }
       if (buffer_view < 0)
         {
           std::cout << "[W] glTF 2.0 5.18.3: image.bufferView >= 0"
                     << std::endl;
           return nullptr;
         }
-      if (buffer_view >= helper.buffer_views_size ())
+      if (buffer_view.value () + helper.buffer_view_defaults_size ()
+          >= helper.buffer_views_size ())
         {
           std::cout << "[W] glTF 2.0 5.18.3: image.bufferView is out of range"
                     << std::endl;
           return nullptr;
         }
-      tmp->m_buffer_view = buffer_view;
+      tmp->m_buffer_view
+          = buffer_view.value () + helper.buffer_view_defaults_size ();
 
       if (mime_type == "image/jpeg")
         tmp->m_mime_type = GLTFImageMIMEType::jpeg;
@@ -101,6 +112,15 @@ GLTFImage::create (const IndexHelper &helper, const std::string &name,
     }
   else // Data in file or uri (Base64)
     {
+      if (buffer_view != std::nullopt)
+        {
+          std::cout << "[W] glTF 2.0 5.18.1: image.bufferView must be "
+                       "undefined with "
+                       "non-empty URI"
+                    << std::endl;
+          return nullptr;
+        }
+        
       // Check for base64
       size_t prefix = std::string::npos;
 

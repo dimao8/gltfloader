@@ -51,7 +51,8 @@ GLTFBuffer::size () const
 /* *************************** GLTFBuffer::create ************************** */
 
 std::shared_ptr<GLTFBuffer>
-GLTFBuffer::create (const std::string &name, const std::string &uri)
+GLTFBuffer::create (const std::string &name, const std::string &uri,
+                    size_t length)
 {
   std::shared_ptr<GLTFBuffer> tmp (new GLTFBuffer (name));
 
@@ -60,51 +61,68 @@ GLTFBuffer::create (const std::string &name, const std::string &uri)
 
   // TODO : Correct URI parsing
 
-  // Check for base64
-  size_t prefix = std::string::npos;
-
-  if (uri.find (prefix_str1) == 0)
-    prefix = prefix_str1.size ();
-  else if (uri.find (prefix_str2) == 0)
-    prefix = prefix_str2.size ();
-
-  if (prefix != std::string::npos)
+  if (uri.empty ())
     {
-      if (!base64_import (tmp->m_data, uri.substr (prefix)))
-        {
-          std::cout << "[W] glTF 2.0 5.10.1: Expect base64 string"
-                    << std::endl;
-          return nullptr;
-        }
+      // TODO : What we are going to do if URI is empty?
+      std::cout << "[W] Empty URI detected" << std::endl;
+      std::cout << "[I] glTF 2.0 5.10.1 allows empty URIs but define no "
+                   "actions in this case"
+                << std::endl;
+      return nullptr;
     }
   else
     {
-      std::ifstream file (uri);
+      // Check for base64
+      size_t prefix = std::string::npos;
 
-      if (!file)
+      if (uri.find (prefix_str1) == 0)
+        prefix = prefix_str1.size ();
+      else if (uri.find (prefix_str2) == 0)
+        prefix = prefix_str2.size ();
+
+      if (prefix != std::string::npos)
         {
-          std::cout << "[W] glTF 2.0 5.10.1: The file \"" << uri
-                    << "\" can not be read" << std::endl;
-          return nullptr;
+          if (!base64_import (tmp->m_data, uri.substr (prefix)))
+            {
+              std::cout << "[W] glTF 2.0 5.10.1: Expect base64 string"
+                        << std::endl;
+              return nullptr;
+            }
+        }
+      else
+        {
+          std::ifstream file (uri);
+
+          if (!file)
+            {
+              std::cout << "[W] glTF 2.0 5.10.1: The file \"" << uri
+                        << "\" can not be read" << std::endl;
+              return nullptr;
+            }
+
+          file.seekg (0, std::ios_base::end);
+          size_t sz = file.tellg ();
+          file.seekg (0, std::ios_base::beg);
+
+          if (sz == 0)
+            {
+              std::cout << "[W] glTF 2.0 5.10.1: The file \"" << uri
+                        << "\" is empty" << std::endl;
+              return nullptr;
+            }
+          if (sz < length)
+            {
+              std::cout << "[W] glTF 2.0 3.6.1.1: The file \"" << uri
+                        << " can not be shorter than buffer" << std::endl;
+              return nullptr;
+            }
+          tmp->m_data.assign (std::istreambuf_iterator<char> (file),
+                              std::istreambuf_iterator<char> ());
+          tmp->m_data.resize (length);
         }
 
-      file.seekg (0, std::ios_base::end);
-      size_t sz = file.tellg ();
-      file.seekg (0, std::ios_base::beg);
-
-      if (sz == 0)
-        {
-          std::cout << "[W] glTF 2.0 5.10.1: The file \"" << uri
-                    << "\" is empty" << std::endl;
-          return nullptr;
-        }
-
-      tmp->m_data.reserve (sz);
-      tmp->m_data.assign (std::istreambuf_iterator<char> (file),
-                          std::istreambuf_iterator<char> ());
+      return (tmp->m_data.empty () ? nullptr : tmp);
     }
-
-  return (tmp->m_data.empty () ? nullptr : tmp);
 }
 
 }

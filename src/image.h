@@ -2,10 +2,12 @@
 #define IMAGE_H
 
 #include "gltfnamedobject.h"
+#include "gltftypes.h"
 #include "indexhelper.h"
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -13,15 +15,6 @@ namespace gltfloader
 {
 
 class GLTFBufferView;
-
-///
-/// \brief MIME type enumerator
-///
-enum class GLTFImageMIMEType
-{
-  png, ///< image/png
-  jpeg ///< image/jpeg
-};
 
 ///
 /// \brief glTF 2.0 image class
@@ -68,7 +61,7 @@ private:
   GLTFImageMIMEType m_mime_type;
   std::string m_path;
   std::vector<uint8_t> m_data;
-  size_t m_buffer_view;
+  std::optional<size_t> m_buffer_view;
 
   GLTFImage (const std::string &name);
 
@@ -83,11 +76,12 @@ public:
   const std::string &path () const;
   const std::vector<uint8_t> &data () const;
   size_t data_size () const;
-  size_t buffer_view () const;
+  const std::optional<size_t> &buffer_view () const;
 
   static const std::shared_ptr<GLTFImage>
-  create (const IndexHelper &helper, const std::string &name, int buffer_view,
-          const std::string &mime_type, const std::string &uri);
+  create (const IndexHelper &helper, const std::string &name,
+          const std::optional<int> &buffer_view, const std::string &mime_type,
+          const std::string &uri);
 };
 
 }

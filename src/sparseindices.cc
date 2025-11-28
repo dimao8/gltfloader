@@ -30,7 +30,7 @@ GLTFAccessorSparseIndices::byte_offset () const
 
 /* *************** GLTFAccessorSparseIndices::component_type *************** */
 
-GLTFSparseIndicesComponentType
+GLTFComponentType
 GLTFAccessorSparseIndices::component_type () const
 {
   return m_component_type;
@@ -65,16 +65,16 @@ GLTFAccessorSparseIndices::create (const IndexHelper &helper, int buffer_view,
 
   switch (component_type)
     {
-    case static_cast<int> (GLTFSparseIndicesComponentType::unsigned_byte):
-      tmp->m_component_type = GLTFSparseIndicesComponentType::unsigned_byte;
+    case static_cast<int> (GLTFComponentType::unsigned_byte):
+      tmp->m_component_type = GLTFComponentType::unsigned_byte;
       break;
 
-    case static_cast<int> (GLTFSparseIndicesComponentType::unsigned_short):
-      tmp->m_component_type = GLTFSparseIndicesComponentType::unsigned_short;
+    case static_cast<int> (GLTFComponentType::unsigned_short):
+      tmp->m_component_type = GLTFComponentType::unsigned_short;
       break;
 
-    case static_cast<int> (GLTFSparseIndicesComponentType::unsigned_int):
-      tmp->m_component_type = GLTFSparseIndicesComponentType::unsigned_short;
+    case static_cast<int> (GLTFComponentType::unsigned_int):
+      tmp->m_component_type = GLTFComponentType::unsigned_short;
       break;
 
     default:

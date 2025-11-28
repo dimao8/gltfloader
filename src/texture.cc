@@ -1,5 +1,5 @@
-#include "indexhelper.h"
 #include "texture.h"
+#include "indexhelper.h"
 
 #include <iostream>
 #include <optional>
@@ -36,11 +36,11 @@ std::shared_ptr<GLTFTexture>
 GLTFTexture::create (const IndexHelper &helper, const std::string &name,
                      std::optional<int> sampler, std::optional<int> source)
 {
-  std::shared_ptr<GLTFTexture> texture = std::make_shared<GLTFTexture> (name);
+  std::shared_ptr<GLTFTexture> tmp (new GLTFTexture (name));
 
   if (sampler == std::nullopt)
     {
-      // TODO : Make default sampler
+      tmp->m_sampler = helper.default_texture_sampler_index();
     }
   else if (sampler < 0)
     {
@@ -49,7 +49,7 @@ GLTFTexture::create (const IndexHelper &helper, const std::string &name,
     }
   else if (sampler >= helper.samplers_size ())
     {
-      texture->m_sampler = sampler;
+      tmp->m_sampler = sampler;
     }
 
   if (source == std::nullopt)
@@ -62,7 +62,7 @@ GLTFTexture::create (const IndexHelper &helper, const std::string &name,
       return nullptr;
     }
 
-  return texture;
+  return tmp;
 }
 
 }

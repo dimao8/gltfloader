@@ -3,6 +3,7 @@
 
 #include "gltfobject.h"
 #include "indexhelper.h"
+#include "gltftypes.h"
 
 #include <memory>
 #include <string>
@@ -11,14 +12,6 @@ namespace gltfloader
 {
 
 class GLTFAccessor;
-
-enum class GLTFInterpolationMethod
-{
-  none,
-  step,
-  linear,
-  cubic
-};
 
 class GLTFAnimationSampler : public GLTFObject
 {

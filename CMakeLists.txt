@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 # Project
 project(gltfloader
-  VERSION 0.1.0.4
+  VERSION 0.1.0.5
   DESCRIPTION "glTF 2.0 loader"
   HOMEPAGE_URL ""
   LANGUAGES CXX
@@ -42,6 +42,7 @@ set(SOURCES
   src/orthographiccamera.cc
   src/sparseindices.cc
   src/sparsevalues.cc
+  src/texture.cc
 )
 
 set(HEADERS
@@ -57,6 +58,7 @@ set(HEADERS
   src/camera.h
   src/gltfnamedobject.h
   src/gltfobject.h
+  src/gltftypes.h
   src/image.h
   src/material.h
   src/mesh.h
@@ -65,6 +67,7 @@ set(HEADERS
   src/orthographiccamera.h
   src/sparseindices.h
   src/sparsevalues.h
+  src/texture.h
 )
 
 set(INTERFACE_HEADERS

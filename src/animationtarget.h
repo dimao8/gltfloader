@@ -3,8 +3,10 @@
 
 #include "gltfobject.h"
 #include "indexhelper.h"
+#include "gltftypes.h"
 
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace gltfloader
@@ -12,18 +14,10 @@ namespace gltfloader
 
 class GLTFNode;
 
-enum class GLTFAnimationPath
-{
-  translation,
-  rotation,
-  scale,
-  weights
-};
-
 class GLTFAnimationTarget : public GLTFObject
 {
 private:
-  size_t m_node;
+  std::optional<size_t> m_node;
   GLTFAnimationPath m_path;
 
   GLTFAnimationTarget ();
@@ -32,14 +26,16 @@ public:
   GLTFAnimationTarget (const GLTFAnimationTarget &) = delete;
   virtual ~GLTFAnimationTarget () {}
 
-  size_t node () const;
+  const std::optional<size_t> &node () const;
   GLTFAnimationPath path () const;
 
   static std::shared_ptr<GLTFAnimationTarget>
-  create (const IndexHelper &helper, int node, const std::string &path);
+  create (const IndexHelper &helper, const std::optional<int> &node,
+          const std::string &path);
 };
 
 bool operator== (const GLTFAnimationTarget &t1, const GLTFAnimationTarget &t2);
+bool operator!= (const GLTFAnimationTarget &t1, const GLTFAnimationTarget &t2);
 
 }
 

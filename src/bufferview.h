@@ -2,9 +2,11 @@
 #define BUFFERVIEW_H
 
 #include "gltfnamedobject.h"
+#include "gltftypes.h"
 #include "indexhelper.h"
 
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace gltfloader
@@ -12,20 +14,14 @@ namespace gltfloader
 
 class GLTFBuffer;
 
-enum class GLTFBufferViewTarget
-{
-  array_buffer = 34962,
-  element_array_buffer = 34963
-};
-
 class GLTFBufferView : public GLTFNamedObject
 {
 private:
   size_t m_buffer;
-  GLTFBufferViewTarget m_target;
-  int m_byte_offset;
-  int m_byte_length;
-  int m_byte_stride;
+  std::optional<GLTFBufferViewTarget> m_target;
+  size_t m_byte_offset;
+  size_t m_byte_length;
+  std::optional<size_t> m_byte_stride;
 
   GLTFBufferView (const std::string &name);
 
@@ -36,12 +32,16 @@ public:
   virtual ~GLTFBufferView () {}
 
   size_t buffer () const;
-  GLTFBufferViewTarget target () const;
+  const std::optional<GLTFBufferViewTarget> &target () const;
+  size_t byte_offset () const;
+  size_t byte_length () const;
+  const std::optional<size_t> &byte_stride () const;
 
   static std::shared_ptr<GLTFBufferView>
   create (const IndexHelper &helper, const std::string &name, int buffer,
-          int target, int byte_offset = 0, int byte_length = 1,
-          int byte_stride = 4);
+          const std::optional<int> &target, int byte_offset = 0,
+          int byte_length = 1,
+          const std::optional<int> &byte_stride = std::nullopt);
 };
 
 }

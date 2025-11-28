@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include "gltfnamedobject.h"
+#include "gltftypes.h"
 
 #include <memory>
 #include <string>
@@ -11,12 +12,6 @@ namespace gltfloader
 
 class GLTFOrthographicCamera;
 class GLTFPerspectiveCamera;
-
-enum class GLTFCameraType
-{
-  orthographic,
-  perspective
-};
 
 class GLTFCamera : public GLTFNamedObject
 {

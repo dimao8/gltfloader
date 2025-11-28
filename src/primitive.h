@@ -2,6 +2,7 @@
 #define PRIMITIVE_H
 
 #include "gltfobject.h"
+#include "gltftypes.h"
 
 #include <map>
 #include <memory>
@@ -14,17 +15,6 @@ namespace gltfloader
 {
 
 class GLTFAccessor;
-
-enum GLTFDrawMode
-{
-  points = 0,
-  lines = 1,
-  line_loop = 2,
-  line_strip = 3,
-  triangles = 4,
-  triangle_strip = 5,
-  triangle_fan = 6
-};
 
 class GLTFPrimitive : public GLTFObject
 {
