@@ -18,7 +18,7 @@ configure_file(${DOXYGEN_SOURCE_DIR}/Doxyfile.in
 )
 
 add_custom_target(html
-  doxygen ${DOXYGEN_BINARY_DIR}/Doxyfile
+  doxygen -q ${DOXYGEN_BINARY_DIR}/Doxyfile
   DEPENDS ${DOXYGEN_BINARY_DIR}/Doxyfile
 )
 endif()

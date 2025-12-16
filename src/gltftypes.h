@@ -71,10 +71,26 @@ enum class GLTFImageMIMEType
 
 enum class GLTFInterpolationMethod
 {
-  none,
   step,
   linear,
   cubic
+};
+
+enum class GLTFTextureFilter
+{
+  nearest = 9728,
+  linear = 9729,
+  nearest_mipmap_nearest = 9984,
+  linear_mipmap_nearest = 9985,
+  nearest_mipmap_linear = 9986,
+  linear_mipmap_linear = 9987
+};
+
+enum class GLTFTextureWrap
+{
+  clamp_to_edge = 33071,
+  mirrored_repeat = 33648,
+  repeat = 10497
 };
 
 }
