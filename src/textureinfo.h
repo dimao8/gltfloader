@@ -19,6 +19,7 @@ private:
   GLTFTextureInfo ();
 
 public:
+  GLTFTextureInfo (const GLTFTextureInfo &) = delete;
   virtual ~GLTFTextureInfo ();
   size_t index () const;
   size_t tex_coord () const;

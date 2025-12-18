@@ -9,7 +9,8 @@ namespace gltfloader
 
 /* ******************** GLTFTextureInfo::GLTFTextureInfo ******************* */
 
-GLTFTextureInfo::GLTFTextureInfo () : GLTFObject ()
+GLTFTextureInfo::GLTFTextureInfo ()
+    : GLTFObject (), m_index (0), m_tex_coord (0)
 {
   //
 }
