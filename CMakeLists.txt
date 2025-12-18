@@ -2,31 +2,72 @@ cmake_minimum_required(VERSION 3.18)
 
 # Project
 project(gltfloader
-  VERSION 0.1.0.0
+  VERSION 0.1.0.6
   DESCRIPTION "glTF 2.0 loader"
   HOMEPAGE_URL ""
   LANGUAGES CXX
 )
+set(PACKAGE ${PROJECT_NAME})
+set(VERSION ${PROJECT_VERSION})
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 # Compile options
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED 17)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options(-pedantic)
 endif()
 
 # Sources and headers
 set(SOURCES
+  src/accessor.cc
+  src/accessorsparse.cc
+  src/animation.cc
+  src/animationchannel.cc
+  src/animationsampler.cc
+  src/animationtarget.cc
+  src/asset.cc
   src/buffer.cc
+  src/bufferview.cc
+  src/camera.cc
   src/gltfloader.cc
+  src/gltfnamedobject.cc
   src/gltfobject.cc
+  src/image.cc
+  src/material.cc
+  src/mesh.cc
+  src/normaltextureinfo.cc
+  src/occlusiontextureinfo.cc
+  src/orthographiccamera.cc
+  src/sparseindices.cc
+  src/sparsevalues.cc
+  src/texture.cc
 )
 
 set(HEADERS
+  src/accessor.h
+  src/accessorsparse.h
+  src/animation.h
+  src/animationchannel.h
+  src/animationsampler.h
+  src/animationtarget.h
+  src/asset.h
   src/buffer.h
-  src/gltfobject.cc
+  src/bufferview.h
+  src/camera.h
+  src/gltfnamedobject.h
+  src/gltfobject.h
+  src/gltftypes.h
+  src/image.h
+  src/material.h
+  src/mesh.h
+  src/normaltextureinfo.h
+  src/occlusiontextureinfo.h
+  src/orthographiccamera.h
+  src/sparseindices.h
+  src/sparsevalues.h
+  src/texture.h
 )
 
 set(INTERFACE_HEADERS
@@ -50,8 +91,27 @@ set_target_properties(gltfloader PROPERTIES
   PUBLIC_HEADER "${INTERFACE_HEADERS}"
 )
 
+# Check for uuid
+find_file(UUID_HEADER "uuid.h"
+  PATHS "/usr/include/uuid/")
+if(NOT UUID_HEADER)
+  message(FATAL_ERROR "uuid.h not found")
+else()
+  get_filename_component(UUID_INCLUDE ${UUID_HEADER} PATH)
+  target_include_directories(
+    gltfloader PUBLIC
+    ${UUID_INCLUDE}
+  )
+endif()
+
 # Check for jsonloader
 find_package(litejson)
+
+# Check for pngloader
+find_package(pngloader)
+
+# Check for jpegloader
+find_package(jpegloader)
 
 # Configuration
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Headers install directory")
@@ -70,6 +130,9 @@ write_basic_package_version_file(
   COMPATIBILITY SameMajorVersion
 )
 
+# Docs
+add_subdirectory(doc)
+
 # Install
 install(
   TARGETS gltfloader
@@ -85,8 +148,6 @@ install(
 )
 
 # Config file
-set(PACKAGE ${PROJECT_NAME})
-set(VERSION ${PROJECT_VERSION})
 configure_file(
   ${CMAKE_SOURCE_DIR}/config.h.in
   ${CMAKE_BINARY_DIR}/config.h

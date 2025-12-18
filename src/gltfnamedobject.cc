@@ -1,6 +1,6 @@
 #include "gltfnamedobject.h"
 
-#include <uuid/uuid.h>
+#include <uuid.h>
 
 namespace gltfloader
 {
