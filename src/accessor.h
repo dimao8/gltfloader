@@ -2,8 +2,8 @@
 #define ACCESSOR_H
 
 #include "gltfnamedobject.h"
-#include "indexhelper.h"
 #include "gltftypes.h"
+#include "indexhelper.h"
 
 #include <memory>
 #include <optional>
@@ -22,7 +22,7 @@ private:
   size_t m_byte_offset;
   GLTFComponentType m_component_type;
   GLTFAccessorType m_type;
-  bool m_normalize;
+  bool m_normalized;
   size_t m_count;
   std::vector<float> m_min;
   std::vector<float> m_max;
@@ -40,7 +40,7 @@ public:
   size_t byte_offset () const;
   GLTFComponentType component_type () const;
   GLTFAccessorType type () const;
-  bool normalize () const;
+  bool normalized () const;
   size_t count () const;
   const std::vector<float> &min () const;
   const std::vector<float> &max () const;
@@ -48,14 +48,12 @@ public:
 
   static std::shared_ptr<GLTFAccessor>
   create (const IndexHelper &helper, const std::string &name,
-          int component_type, int count, const std::string &type,
-          const std::optional<int> &buffer_view, int byte_offset = 0,
-          bool normalize = false, const std::vector<float> &min = {},
-          const std::vector<float> &max = {},
-          const std::shared_ptr<GLTFAccessorSparse> &sparse = nullptr);
-
-  static std::shared_ptr<GLTFAccessor> create (const IndexHelper &helper,
-                                               const std::string &name);
+          const std::optional<int> &buffer_view,
+          const std::optional<int> &byte_offset, int component_type,
+          const std::optional<bool> &normalized, int count,
+          const std::string &type, const std::vector<float> &min,
+          const std::vector<float> &max,
+          const std::shared_ptr<GLTFAccessorSparse> &sparse);
 };
 
 /**

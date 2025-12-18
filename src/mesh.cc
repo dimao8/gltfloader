@@ -37,6 +37,8 @@ GLTFMesh::create (
     const std::vector<std::shared_ptr<GLTFPrimitive> > &primitives,
     const std::vector<float> &weights)
 {
+  // TODO : According to glTF 2.0 3.7.2 Only position actually must have
+  // min value in accessor. Check it at mesh loading
   std::shared_ptr<GLTFMesh> tmp (new GLTFMesh (name));
 
   if (primitives.empty ())

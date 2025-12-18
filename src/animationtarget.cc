@@ -22,26 +22,36 @@ GLTFAnimationTarget::create (const IndexHelper &helper,
                              const std::string &path)
 {
   std::shared_ptr<GLTFAnimationTarget> tmp (new GLTFAnimationTarget ());
+  size_t shifted_node_index;
 
   if (node == std::nullopt)
     {
       // glTF 2.0 5.7.1 Extension must be used
       // TODO : Check for extension
+      std::cout << "[W] glTF 2.0 5.7.1: animation.channel[n].target.node "
+                   "defined by extension"
+                << std::endl;
+      return nullptr;
     }
-  else if (node < 0)
+  else if (node.value () < 0)
     {
       std::cout << "[W] glTF 2.0 5.7.1: animation.channel[n].target.node >= 0"
                 << std::endl;
       return nullptr;
     }
-  else if (node.value() + helper.node_defaults_size() >= helper.nodes_size ())
+  else
+    {
+      shifted_node_index = node.value () + helper.node_defaults_size ();
+    }
+
+  if (shifted_node_index >= helper.nodes_size ())
     {
       std::cout << "[W] glTF 2.0 5.7.1: animation.channel[n].target.node is "
                    "out of range"
                 << std::endl;
       return nullptr;
     }
-  tmp->m_node = node.value () + helper.node_defaults_size ();
+  tmp->m_node = shifted_node_index;
 
   if (path == "translation")
     tmp->m_path = GLTFAnimationPath::translation;
@@ -59,6 +69,8 @@ GLTFAnimationTarget::create (const IndexHelper &helper,
           << std::endl;
       return nullptr;
     }
+
+  // TODO : Check for target structure depending on path
 
   return tmp;
 }

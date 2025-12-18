@@ -44,12 +44,21 @@ GLTFAnimationChannel::create (
                 << std::endl;
       return nullptr;
     }
-  tmp->m_sampler = sampler + helper.sampler_defaults_size();
+  size_t shifted_sampler_index = sampler + helper.sampler_defaults_size ();
+  if (shifted_sampler_index >= helper.samplers_size ())
+    {
+      std::cout
+          << "[W] glTF 2.0 5.6.1: animation.channels[n].sampler is out of "
+             "range"
+          << std::endl;
+      return nullptr;
+    }
+  tmp->m_sampler = shifted_sampler_index;
 
   if (target == nullptr)
     {
       std::cout
-          << "[W] glTF 2.0 5.6.2: animation.channels[n].target must must exist"
+          << "[W] glTF 2.0 5.6.2: animation.channels[n].target must exist"
           << std::endl;
       return nullptr;
     }

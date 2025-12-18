@@ -6,6 +6,7 @@
 #include "gltftypes.h"
 
 #include <memory>
+#include <optional>
 
 namespace gltfloader
 {
@@ -31,7 +32,8 @@ public:
 
   static std::shared_ptr<GLTFAccessorSparseIndices>
   create (const IndexHelper &helper, int buffer_view,
-          int component_type, int byte_offset = 0);
+          const std::optional<int>& byte_offset,
+          int component_type);
 };
 
 }

@@ -1,6 +1,11 @@
 #include "accessor.h"
 #include "accessorsparse.h"
+#include "buffer.h"
+#include "bufferview.h"
 #include "gltfnamedobject.h"
+#include "indexhelper.h"
+#include "sparseindices.h"
+#include "sparsevalues.h"
 
 #include <iostream>
 #include <memory>
@@ -53,9 +58,9 @@ GLTFAccessor::type () const
 /* ************************ GLTFAccessor::normalize ************************ */
 
 bool
-GLTFAccessor::normalize () const
+GLTFAccessor::normalized () const
 {
-  return m_normalize;
+  return m_normalized;
 }
 
 /* ************************** GLTFAccessor::count ************************** */
@@ -94,9 +99,11 @@ GLTFAccessor::sparse () const
 
 std::shared_ptr<GLTFAccessor>
 GLTFAccessor::create (const IndexHelper &helper, const std::string &name,
-                      int component_type, int count, const std::string &type,
-                      const std::optional<int> &buffer_view, int byte_offset,
-                      bool normalize, const std::vector<float> &min,
+                      const std::optional<int> &buffer_view,
+                      const std::optional<int> &byte_offset,
+                      int component_type,
+                      const std::optional<bool> &normalized, int count,
+                      const std::string &type, const std::vector<float> &min,
                       const std::vector<float> &max,
                       const std::shared_ptr<GLTFAccessorSparse> &sparse)
 {
@@ -110,7 +117,7 @@ GLTFAccessor::create (const IndexHelper &helper, const std::string &name,
       tmp->m_byte_offset = 0;
       tmp->m_component_type = GLTFComponentType::unsigned_byte;
       tmp->m_type = GLTFAccessorType::scalar;
-      tmp->m_normalize = false;
+      tmp->m_normalized = false;
       tmp->m_count = 0;
       tmp->m_min.clear ();
       tmp->m_max.clear ();
@@ -145,33 +152,41 @@ GLTFAccessor::create (const IndexHelper &helper, const std::string &name,
                     << std::endl;
           return nullptr;
         }
-      tmp->m_byte_offset = byte_offset;
+      tmp->m_byte_offset = byte_offset.value_or (0);
+
+      size_t val_sz;
 
       // glTF 2.0 5.1.3 componentType is required field
       switch (component_type)
         {
         case static_cast<int> (GLTFComponentType::unsigned_byte):
           tmp->m_component_type = GLTFComponentType::unsigned_byte;
+          val_sz = 1;
           break;
 
         case static_cast<int> (GLTFComponentType::byte):
           tmp->m_component_type = GLTFComponentType::byte;
+          val_sz = 1;
           break;
 
         case static_cast<int> (GLTFComponentType::unsigned_short):
           tmp->m_component_type = GLTFComponentType::unsigned_short;
+          val_sz = 2;
           break;
 
         case static_cast<int> (GLTFComponentType::sshort):
           tmp->m_component_type = GLTFComponentType::sshort;
+          val_sz = 2;
           break;
 
         case static_cast<int> (GLTFComponentType::unsigned_int):
           tmp->m_component_type = GLTFComponentType::unsigned_int;
+          val_sz = 4;
           break;
 
         case static_cast<int> (GLTFComponentType::ffloat):
           tmp->m_component_type = GLTFComponentType::ffloat;
+          val_sz = 4;
           break;
 
         default:
@@ -207,62 +222,125 @@ GLTFAccessor::create (const IndexHelper &helper, const std::string &name,
           return nullptr;
         }
 
+      tmp->m_normalized = normalized.value_or (false);
+
+      if (count <= 0)
+        {
+          std::cout << "[W] glTF 2.0 5.1.5: accessor.count > 0" << std::endl;
+          return nullptr;
+        }
+      else
+        tmp->m_count = count;
+
       size_t sz = accessor_size (tmp->m_type);
 
-      // TODO : According to glTF 2.0 3.7.2 Only position actually must have
-      // min value in accessor. We are just check it's size, not it's  Check it
-      // at mesh loading
-      if (min.size () != sz)
+      // NOTE : According to glTF 2.0 3.7.2 Only position actually must have
+      // min value in accessor. Check it at mesh loading
+      if (min.size () != 0)
         {
-          std::cout
-              << "[W] glTF 2.0 5.1.8: accessor.min must conforms accessor.type"
-              << std::endl;
-          return nullptr;
+          if (min.size () != sz)
+            {
+              std::cout << "[W] glTF 2.0 5.1.8: accessor.min must conforms "
+                           "accessor.type"
+                        << std::endl;
+              return nullptr;
+            }
+          else
+            tmp->m_min = min;
         }
-      else
-        tmp->m_min = min;
 
-      // TODO : According to glTF 2.0 3.7.2 Only position actually must have
+      // NOTE : According to glTF 2.0 3.7.2 Only position actually must have
       // max value in accessor. Check it at mesh loading
-      if (max.size () != sz)
+      if (max.size () != 0)
         {
-          std::cout
-              << "[W] glTF 2.0 5.1.8: accessor.max must conforms accessor.type"
-              << std::endl;
-          return nullptr;
+          if (max.size () != sz)
+            {
+              std::cout << "[W] glTF 2.0 5.1.8: accessor.max must conforms "
+                           "accessor.type"
+                        << std::endl;
+              return nullptr;
+            }
+          else
+            tmp->m_max = max;
         }
-      else
-        tmp->m_max = max;
 
-      if (sparse == nullptr)
-        return nullptr;
+      if (sparse != nullptr)
+        {
+          // Check indices presents
+          if (sparse->indices () == nullptr)
+            {
+              std::cout << "[W] glTF 2.0 5.2.2: accessor.sparse.indices must "
+                           "be present"
+                        << std::endl;
+              return nullptr;
+            }
 
-      // FIXME : Need to create invalid sparse to separate bad sparse and no
-      // sparse
+          // Check values presents
+          if (sparse->values () == nullptr)
+            {
+              std::cout << "[W] glTF 2.0 5.2.3: accessor.sparse.values must "
+                           "be present"
+                        << std::endl;
+              return nullptr;
+            }
+
+          // Check indices bufferView index boundaries
+          size_t shifted_buffer_view = helper.buffer_view_defaults_size ()
+                                       + sparse->indices ()->buffer_view ();
+          if (shifted_buffer_view >= helper.buffer_views_size ())
+            {
+              std::cout << "[W] glTF 2.0 5.3.1: "
+                           "accessor.sparse.indices.bufferView is "
+                           "out of range"
+                        << std::endl;
+              return nullptr;
+            }
+
+          // Check indices bufferView target and stride missing
+          if (helper.buffer_view (shifted_buffer_view)->target ().has_value ()
+              || helper.buffer_view (shifted_buffer_view)
+                     ->byte_stride ()
+                     .has_value ())
+            {
+              std::cout
+                  << "[W] glTF 2.0 5.3.1: accessor.sparse.indices.bufferView "
+                     "must not have its target or byteStride properties "
+                     "defined"
+                  << std::endl;
+              return nullptr;
+            }
+
+          // Check indices bufferView and sparse alignment
+          if (((helper.buffer_view (shifted_buffer_view)->byte_offset ()
+                % (sz * val_sz))
+               != 0)
+              || ((tmp->m_sparse->indices ()->byte_offset () % (sz * val_sz))
+                  != 0))
+            {
+              std::cout
+                  << "[W] glTF 2.0 5.3.1: accessor.sparse.indices.bufferView "
+                     "and sparse must be aligned to the componentType"
+                  << std::endl;
+            }
+
+          // TODO : Check index sequence
+
+          // Check indices bufferView index boundaries
+          shifted_buffer_view = helper.buffer_view_defaults_size ()
+                                + sparse->values ()->buffer_view ();
+          if (shifted_buffer_view >= helper.buffer_views_size ())
+            {
+              std::cout << "[W] glTF 2.0 5.3.1: "
+                           "accessor.sparse.indices.bufferView is "
+                           "out of range"
+                        << std::endl;
+              return nullptr;
+            }
+        }
       tmp->m_sparse = sparse;
 
       return tmp;
     }
-}
-
-/* ************************** GLTFAccessor::create ************************* */
-
-std::shared_ptr<GLTFAccessor>
-GLTFAccessor::create (const IndexHelper &helper, const std::string &name)
-{
-  std::shared_ptr<GLTFAccessor> tmp (new GLTFAccessor (name));
-
-  tmp->m_buffer_view = std::nullopt;
-  tmp->m_component_type = GLTFComponentType::byte;
-  tmp->m_type = GLTFAccessorType::scalar;
-  tmp->m_byte_offset = 0;
-  tmp->m_count = 0;
-  tmp->m_max = {};
-  tmp->m_min = {};
-  tmp->m_normalize = false;
-  tmp->m_sparse = nullptr;
-
-  return tmp;
 }
 
 /* ***************************** accessor_size ***************************** */

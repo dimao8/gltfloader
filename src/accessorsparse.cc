@@ -46,7 +46,7 @@ GLTFAccessorSparse::create (
 {
   std::shared_ptr<GLTFAccessorSparse> tmp (new GLTFAccessorSparse ());
 
-  if (count < 1)
+  if (count <= 0)
     {
       std::cout << "[W] glTF 2.0 5.2.1: accessor.sparse.count >= 1"
                 << std::endl;
@@ -54,22 +54,10 @@ GLTFAccessorSparse::create (
     }
   tmp->m_count = count;
 
-  if (indices == nullptr)
-    {
-      std::cout
-          << "[W] glTF 2.0 5.2.2: accessor.sparse.indices must be present"
-          << std::endl;
-      return nullptr;
-    }
-  // TODO : Check for buffer size
+  // NOTE : Presents is checked in GLTFAccessor::create
   tmp->m_indices = indices;
 
-  if (values == nullptr)
-    {
-      std::cout << "[W] glTF 2.0 5.2.3: accessor.sparse.values must be present"
-                << std::endl;
-      return nullptr;
-    }
+  // TODO : Check for buffer size
   tmp->m_values = values;
 
   return tmp;

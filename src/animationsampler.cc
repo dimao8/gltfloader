@@ -51,14 +51,16 @@ GLTFAnimationSampler::create (const IndexHelper &helper, int input, int output,
                 << std::endl;
       return nullptr;
     }
-  if (input + helper.accessor_defaults_size() >= helper.accessors_size ())
+  size_t shifted_accessor = input + helper.accessor_defaults_size();
+  if (shifted_accessor >= helper.accessors_size ())
     {
       std::cout
           << "[W] glTF 2.0 5.8.1: animation.samplers[n].input is out of range"
           << std::endl;
       return nullptr;
     }
-  tmp->m_input = input + helper.accessor_defaults_size();
+  // TODO : Check for input strictly increasing
+  tmp->m_input = shifted_accessor;
 
   if (output < 0)
     {
@@ -66,14 +68,15 @@ GLTFAnimationSampler::create (const IndexHelper &helper, int input, int output,
                 << std::endl;
       return nullptr;
     }
-  if (output + helper.accessor_defaults_size() >= helper.accessors_size ())
+  shifted_accessor = output + helper.accessor_defaults_size();
+  if (shifted_accessor >= helper.accessors_size ())
     {
       std::cout
           << "[W] glTF 2.0 5.8.3: animation.samplers[n].output is out of range"
           << std::endl;
       return nullptr;
     }
-  tmp->m_output = output + helper.accessor_defaults_size();
+  tmp->m_output = shifted_accessor;
 
   if (interpolation.empty ())
     tmp->m_interpolation = GLTFInterpolationMethod::linear;
@@ -91,6 +94,8 @@ GLTFAnimationSampler::create (const IndexHelper &helper, int input, int output,
           << std::endl;
       return nullptr;
     }
+
+  // TODO : Check for sampler accessor size for appropriate interpolation
 
   return tmp;
 }
