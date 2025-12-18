@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 # Project
 project(gltfloader
-  VERSION 0.1.0.6
+  VERSION 0.1.0.8
   DESCRIPTION "glTF 2.0 loader"
   HOMEPAGE_URL ""
   LANGUAGES CXX
@@ -43,6 +43,7 @@ set(SOURCES
   src/sparseindices.cc
   src/sparsevalues.cc
   src/texture.cc
+  src/textureinfo.cc
 )
 
 set(HEADERS
@@ -68,6 +69,7 @@ set(HEADERS
   src/sparseindices.h
   src/sparsevalues.h
   src/texture.h
+  src/textureinfo.h
 )
 
 set(INTERFACE_HEADERS
