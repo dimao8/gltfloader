@@ -13,7 +13,8 @@ namespace gltfloader
 
 /* ************************ GLTFTexture::GLTFTexture *********************** */
 
-GLTFTexture::GLTFTexture (const std::string &name) : GLTFNamedObject (name)
+GLTFTexture::GLTFTexture (const std::string &name)
+    : GLTFNamedObject (name), m_sampler (std::nullopt), m_source (std::nullopt)
 {
   //
 }
@@ -38,7 +39,8 @@ GLTFTexture::source () const
 
 std::shared_ptr<GLTFTexture>
 GLTFTexture::create (const IndexHelper &helper, const std::string &name,
-                     std::optional<int> sampler, std::optional<int> source)
+                     const std::optional<int> &sampler,
+                     const std::optional<int> &source)
 {
   std::shared_ptr<GLTFTexture> tmp (new GLTFTexture (name));
 
