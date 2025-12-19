@@ -25,15 +25,14 @@ private:
 
 public:
   GLTFTexture (const GLTFTexture &) = delete;
-  virtual ~GLTFTexture () {}
+  virtual ~GLTFTexture ();
 
   const std::optional<size_t> &sampler () const;
   const std::optional<size_t> &source () const;
 
-  static std::shared_ptr<GLTFTexture> create (const IndexHelper &helper,
-                                              const std::string &name,
-                                              std::optional<int> sampler,
-                                              std::optional<int> source);
+  static std::shared_ptr<GLTFTexture>
+  create (const IndexHelper &helper, const std::string &name,
+          const std::optional<int> &sampler, const std::optional<int> &source);
 };
 
 }
