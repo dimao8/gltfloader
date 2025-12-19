@@ -19,6 +19,13 @@ GLTFTexture::GLTFTexture (const std::string &name)
   //
 }
 
+/* *********************** GLTFTexture::~GLTFTexture *********************** */
+
+GLTFTexture::~GLTFTexture ()
+{
+  //
+}
+
 /* ************************** GLTFTexture::sampler ************************* */
 
 const std::optional<size_t> &
@@ -63,9 +70,9 @@ GLTFTexture::create (const IndexHelper &helper, const std::string &name,
                     << std::endl;
           return nullptr;
         }
-      else if (sampler >= helper.samplers_size ())
+      else if (shifted_sampler_index >= helper.samplers_size ())
         {
-          tmp->m_sampler = sampler;
+          tmp->m_sampler = shifted_sampler_index;
         }
     }
 

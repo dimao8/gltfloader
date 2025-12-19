@@ -25,7 +25,7 @@ private:
 
 public:
   GLTFTexture (const GLTFTexture &) = delete;
-  virtual ~GLTFTexture () {}
+  virtual ~GLTFTexture ();
 
   const std::optional<size_t> &sampler () const;
   const std::optional<size_t> &source () const;

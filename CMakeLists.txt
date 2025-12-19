@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 # Project
 project(gltfloader
-  VERSION 0.1.0.10
+  VERSION 0.1.0.11
   DESCRIPTION "glTF 2.0 loader"
   HOMEPAGE_URL ""
   LANGUAGES CXX
