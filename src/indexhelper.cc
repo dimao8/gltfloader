@@ -1,6 +1,8 @@
 #include "indexhelper.h"
 
+#include <algorithm>
 #include <optional>
+#include <vector>
 
 namespace gltfloader
 {
@@ -306,7 +308,9 @@ IndexHelper::default_material_emissive_texture_info () const
 bool
 IndexHelper::is_indirect_parent (size_t index, size_t parent) const
 {
-  if (index >= nodes_size() || parent >= nodes_size ())
+  std::vector<size_t> hash;
+
+  if (index >= nodes_size () || parent >= nodes_size ())
     return false;
 
   if (index == parent)
@@ -315,14 +319,19 @@ IndexHelper::is_indirect_parent (size_t index, size_t parent) const
   size_t node = index;
 
   while (true)
-  {
-    if (node == parent)
-      return true;
-    else if (m_nodes[node]->parent() == std::nullopt)
-      return false;
-    else
-      node = m_nodes[node]->parent().value ();
-  }
+    {
+      // Check for circular references
+      if (std::find (hash.begin (), hash.end (), node) != hash.end ())
+        return false;
+
+      if (node == parent)
+        return true;
+      else if (m_nodes[node]->parent () == std::nullopt)
+        return false;
+      else
+        node = m_nodes[node]->parent ().value ();
+      hash.push_back (node);
+    }
 }
 
 /* ************************* IndexHelper::accessor ************************* */
