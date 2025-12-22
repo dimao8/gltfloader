@@ -329,7 +329,7 @@ IndexHelper::is_indirect_parent (size_t index, size_t parent) const
         return false;
       else
         node = m_nodes[node]->parent ().value ();
-      hash.push_back (node);
+      hash.insert (node);
     }
 }
 
