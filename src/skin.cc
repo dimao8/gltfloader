@@ -95,7 +95,7 @@ GLTFSkin::create (const IndexHelper &helper, const std::string &name,
     {
       shifted_accessor_index
           = helper.accessor_defaults_size () + inverse_bind_matrices.value ();
-      if (inverse_bind_matrices < 0)
+      if (inverse_bind_matrices.value () < 0)
         {
           std::cout << "[W] glTF 2.0 5.28.1: skin.inverseBindMatrices >= 0"
                     << std::endl;
@@ -138,7 +138,7 @@ GLTFSkin::create (const IndexHelper &helper, const std::string &name,
     {
       shifted_node_index = helper.node_defaults_size () + skeleton.value ();
 
-      if (skeleton < 0)
+      if (skeleton.value () < 0)
         {
           std::cout << "[W] glTF 2.0 5.28.2: skin.skeleton >= 0" << std::endl;
           return nullptr;
