@@ -17,7 +17,7 @@ bool
 is_joint_unique (const IndexHelper &helper, const std::vector<int> &joints,
                  size_t i)
 {
-  if (i >= helper.nodes_size ())
+  if (i >= joints.size ())
     return true;
 
   size_t cnt = 0;
