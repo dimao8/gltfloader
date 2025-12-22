@@ -1,7 +1,12 @@
 #include "skin.h"
 #include "accessor.h"
+#include "gltftypes.h"
 
 #include <iostream>
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif // HAS_CONFIG_H
 
 namespace gltfloader
 {
@@ -105,12 +110,16 @@ GLTFSkin::create (const IndexHelper &helper, const std::string &name,
         }
       else
         {
-          if (helper.accessor (shifted_accessor_index)->count ()
-              != joints.size ())
+          if ((helper.accessor (shifted_accessor_index)->count ()
+               < joints.size ())
+              || (helper.accessor (shifted_accessor_index)->type ()
+                  != GLTFAccessorType::mat4)
+              || (helper.accessor (shifted_accessor_index)->component_type ()
+                  != GLTFComponentType::ffloat))
             {
               std::cout << "[W] glTF 2.0 5.28.1: skin.inverseBindMatrices "
-                           "must point to an accessor with the same number of "
-                           "elements as joints"
+                           "must point to an accessor with N matrices 4x4, "
+                           "where N > joints.count"
                         << std::endl;
               return nullptr;
             }
@@ -120,9 +129,10 @@ GLTFSkin::create (const IndexHelper &helper, const std::string &name,
 
   if (skeleton == std::nullopt)
     {
-      tmp->m_skeleton = std::nullopt;
-      // NOTE : To find out what node is the root node of the skeleton, we need
-      // to build a scene tree. Only common parent of all joints can be root.
+      std::cout
+          << "[W] glTF 2.0: undefined skin.skeleton is not supported for "
+          << PACKAGE << " " << VERSION << std::endl;
+      return nullptr;
     }
   else
     {
@@ -165,6 +175,16 @@ GLTFSkin::create (const IndexHelper &helper, const std::string &name,
             {
               std::cout << "[W] glTF 2.0 5.28.3: skin.joints[" << i
                         << "] is not unique" << std::endl;
+              return nullptr;
+            }
+
+          if (!helper.is_indirect_parent (joints[i]
+                                              + helper.node_defaults_size (),
+                                          tmp->m_skeleton.value ()))
+            {
+              std::cout << "[W] glTF 2.0 5.28.2: skin.skeleton must be common "
+                           "direct or indirect parent of all joints"
+                        << std::endl;
               return nullptr;
             }
         }

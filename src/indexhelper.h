@@ -132,6 +132,8 @@ public:
   size_t texture_info_defaults_size () const;
   size_t default_material_emissive_texture_info () const;
 
+  bool is_indirect_parent (size_t index, size_t parent) const;
+
   const std::shared_ptr<const GLTFAccessor> accessor (size_t index) const;
   const std::shared_ptr<const GLTFAnimation> animation (size_t index) const;
   const std::shared_ptr<const GLTFBuffer> buffer (size_t index) const;
