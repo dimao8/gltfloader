@@ -1,5 +1,8 @@
 #include "indexhelper.h"
 
+#include <optional>
+#include <unordered_set>
+
 namespace gltfloader
 {
 
@@ -297,6 +300,37 @@ IndexHelper::default_material_emissive_texture_info () const
 {
   // TODO : What if there are no default texture infos?
   return 0;
+}
+
+/* ******************** IndexHelper::is_indirect_parent ******************** */
+
+bool
+IndexHelper::is_indirect_parent (size_t index, size_t parent) const
+{
+  std::unordered_set<size_t> hash;
+
+  if (index >= nodes_size () || parent >= nodes_size ())
+    return false;
+
+  if (index == parent)
+    return false;
+
+  size_t node = index;
+
+  while (true)
+    {
+      // Check for circular references
+      if (hash.find (node) != hash.end ())
+        return false;
+
+      if (node == parent)
+        return true;
+      else if (m_nodes[node]->parent () == std::nullopt)
+        return false;
+      else
+        node = m_nodes[node]->parent ().value ();
+      hash.insert (node);
+    }
 }
 
 /* ************************* IndexHelper::accessor ************************* */
