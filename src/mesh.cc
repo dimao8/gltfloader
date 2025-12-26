@@ -1,5 +1,5 @@
 #include "mesh.h"
-#include "gltfnamedobject.h"
+#include "primitive.h"
 
 #include <iostream>
 
@@ -33,12 +33,10 @@ GLTFMesh::weights () const
 
 std::shared_ptr<GLTFMesh>
 GLTFMesh::create (
-    const std::string &name,
+    IndexHelper &helper, const std::string &name,
     const std::vector<std::shared_ptr<GLTFPrimitive> > &primitives,
     const std::vector<float> &weights)
 {
-  // TODO : According to glTF 2.0 3.7.2 Only position actually must have
-  // min value in accessor. Check it at mesh loading
   std::shared_ptr<GLTFMesh> tmp (new GLTFMesh (name));
 
   if (primitives.empty ())
@@ -48,9 +46,21 @@ GLTFMesh::create (
     }
   tmp->m_primitives = primitives;
 
-  // TODO : Check for morph targets (glTF 2.0, 5.23.2)
   if (!weights.empty ())
-    tmp->m_weights = weights;
+    {
+      for (auto it : primitives)
+        {
+          if (it->targets ().size () != weights.size ())
+            {
+              std::cout << "[W] glTF 2.0: Mesh object weights size "
+                           "does not match the number of targets"
+                        << std::endl;
+              return nullptr;
+            }
+        }
+
+      tmp->m_weights = weights;
+    }
 
   return tmp;
 }

@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include "gltfnamedobject.h"
+#include "indexhelper.h"
 
 #include <memory>
 #include <vector>
@@ -22,13 +23,13 @@ private:
 public:
   GLTFMesh () = delete;
   GLTFMesh (const GLTFMesh &) = delete;
-  virtual ~GLTFMesh () {}
+  virtual ~GLTFMesh ();
 
   const std::vector<std::shared_ptr<GLTFPrimitive> > &primitives () const;
   const std::vector<float> &weights () const;
 
   static std::shared_ptr<GLTFMesh>
-  create (const std::string &name,
+  create (IndexHelper &helper, const std::string &name,
           const std::vector<std::shared_ptr<GLTFPrimitive> > &primitives,
           const std::vector<float> &weights);
 };
