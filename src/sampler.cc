@@ -154,7 +154,7 @@ GLTFSampler::create (IndexHelper &helper, const std::string &name,
     tmp->m_wrap_t = GLTFTextureWrap::repeat;
   else
     {
-      switch (wrap_s.value ())
+      switch (wrap_t.value ())
         {
         case static_cast<int> (GLTFTextureWrap::clamp_to_edge):
           tmp->m_wrap_t = GLTFTextureWrap::clamp_to_edge;
