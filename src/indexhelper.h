@@ -58,7 +58,7 @@ private:
   const size_t &m_sampler_defaults_size;
   const std::vector<std::shared_ptr<GLTFSampler> > &m_samplers;
   const size_t &m_scene_defaults_size;
-  const std::vector<std::shared_ptr<GLTFSampler> > &m_scenes;
+  const std::vector<std::shared_ptr<GLTFScene> > &m_scenes;
   const size_t &m_skin_defaults_size;
   const std::vector<std::shared_ptr<GLTFSkin> > &m_skins;
   const size_t &m_texture_defaults_size;
@@ -91,7 +91,7 @@ public:
       const size_t &sampler_defaults_size,
       const std::vector<std::shared_ptr<GLTFSampler> > &samplers,
       const size_t &scene_defaults_size,
-      const std::vector<std::shared_ptr<GLTFSampler> > &scenes,
+      const std::vector<std::shared_ptr<GLTFScene> > &scenes,
       const size_t &skin_defaults_size,
       const std::vector<std::shared_ptr<GLTFSkin> > &skins,
       const size_t &texture_defaults_size,
@@ -131,23 +131,24 @@ public:
   size_t texture_infos_size () const;
   size_t texture_info_defaults_size () const;
   size_t default_material_emissive_texture_info () const;
+  size_t default_pbr_metallic_roughness_texture_info () const;
 
   bool is_indirect_parent (size_t index, size_t parent) const;
 
-  const std::shared_ptr<const GLTFAccessor> accessor (size_t index) const;
-  const std::shared_ptr<const GLTFAnimation> animation (size_t index) const;
-  const std::shared_ptr<const GLTFBuffer> buffer (size_t index) const;
-  const std::shared_ptr<const GLTFBufferView> buffer_view (size_t index) const;
-  const std::shared_ptr<const GLTFCamera> camera (size_t index) const;
-  const std::shared_ptr<const GLTFImage> image (size_t index) const;
-  const std::shared_ptr<const GLTFMaterial> material (size_t index) const;
-  const std::shared_ptr<const GLTFMesh> mesh (size_t index) const;
-  const std::shared_ptr<const GLTFNode> node (size_t index) const;
-  const std::shared_ptr<const GLTFSampler> sampler (size_t index) const;
-  const std::shared_ptr<const GLTFSampler> scene (size_t index) const;
-  const std::shared_ptr<const GLTFSkin> skin (size_t index) const;
-  const std::shared_ptr<const GLTFTexture> texture (size_t index) const;
-  const std::shared_ptr<const GLTFTextureInfo> texture_info (size_t index) const;
+  const std::shared_ptr<GLTFAccessor> accessor (size_t index) const;
+  const std::shared_ptr<GLTFAnimation> animation (size_t index) const;
+  const std::shared_ptr<GLTFBuffer> buffer (size_t index) const;
+  const std::shared_ptr<GLTFBufferView> buffer_view (size_t index) const;
+  const std::shared_ptr<GLTFCamera> camera (size_t index) const;
+  const std::shared_ptr<GLTFImage> image (size_t index) const;
+  const std::shared_ptr<GLTFMaterial> material (size_t index) const;
+  const std::shared_ptr<GLTFMesh> mesh (size_t index) const;
+  const std::shared_ptr<GLTFNode> node (size_t index) const;
+  const std::shared_ptr<GLTFSampler> sampler (size_t index) const;
+  const std::shared_ptr<GLTFScene> scene (size_t index) const;
+  const std::shared_ptr<GLTFSkin> skin (size_t index) const;
+  const std::shared_ptr<GLTFTexture> texture (size_t index) const;
+  const std::shared_ptr<GLTFTextureInfo> texture_info (size_t index) const;
 };
 
 }
