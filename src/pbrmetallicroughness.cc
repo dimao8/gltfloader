@@ -78,7 +78,8 @@ GLTFPBRMetallicRoughness::create (
   std::shared_ptr<GLTFPBRMetallicRoughness> tmp (
       new GLTFPBRMetallicRoughness ());
 
-  GLTFVector4f v = base_color_factor.value ();
+  GLTFVector4f v
+      = base_color_factor.value_or (GLTFVector4f ({ 1.0, 1.0, 1.0, 1.0 }));
 
   if (base_color_factor == std::nullopt)
     tmp->m_base_color_factor = { 1.0f, 1.0f, 1.0f, 1.0f };
