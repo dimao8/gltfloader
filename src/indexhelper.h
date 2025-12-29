@@ -58,7 +58,7 @@ private:
   const size_t &m_sampler_defaults_size;
   const std::vector<std::shared_ptr<GLTFSampler> > &m_samplers;
   const size_t &m_scene_defaults_size;
-  const std::vector<std::shared_ptr<GLTFSampler> > &m_scenes;
+  const std::vector<std::shared_ptr<GLTFScene> > &m_scenes;
   const size_t &m_skin_defaults_size;
   const std::vector<std::shared_ptr<GLTFSkin> > &m_skins;
   const size_t &m_texture_defaults_size;
@@ -91,7 +91,7 @@ public:
       const size_t &sampler_defaults_size,
       const std::vector<std::shared_ptr<GLTFSampler> > &samplers,
       const size_t &scene_defaults_size,
-      const std::vector<std::shared_ptr<GLTFSampler> > &scenes,
+      const std::vector<std::shared_ptr<GLTFScene> > &scenes,
       const size_t &skin_defaults_size,
       const std::vector<std::shared_ptr<GLTFSkin> > &skins,
       const size_t &texture_defaults_size,
@@ -145,7 +145,7 @@ public:
   const std::shared_ptr<GLTFMesh> mesh (size_t index) const;
   const std::shared_ptr<GLTFNode> node (size_t index) const;
   const std::shared_ptr<GLTFSampler> sampler (size_t index) const;
-  const std::shared_ptr<GLTFSampler> scene (size_t index) const;
+  const std::shared_ptr<GLTFScene> scene (size_t index) const;
   const std::shared_ptr<GLTFSkin> skin (size_t index) const;
   const std::shared_ptr<GLTFTexture> texture (size_t index) const;
   const std::shared_ptr<GLTFTextureInfo> texture_info (size_t index) const;

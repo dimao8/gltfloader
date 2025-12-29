@@ -30,7 +30,7 @@ IndexHelper::IndexHelper (
     const size_t &sampler_defaults_size,
     const std::vector<std::shared_ptr<GLTFSampler> > &samplers,
     const size_t &scene_defaults_size,
-    const std::vector<std::shared_ptr<GLTFSampler> > &scenes,
+    const std::vector<std::shared_ptr<GLTFScene> > &scenes,
     const size_t &skin_defaults_size,
     const std::vector<std::shared_ptr<GLTFSkin> > &skins,
     const size_t &texture_defaults_size,
@@ -445,7 +445,7 @@ IndexHelper::sampler (size_t index) const
 
 /* *************************** IndexHelper::scene ************************** */
 
-const std::shared_ptr<GLTFSampler>
+const std::shared_ptr<GLTFScene>
 IndexHelper::scene (size_t index) const
 {
   if (index >= m_scenes.size ())
