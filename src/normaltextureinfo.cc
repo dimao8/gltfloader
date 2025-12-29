@@ -53,7 +53,7 @@ GLTFNormalTextureInfo::create (const IndexHelper &helper, int index,
 {
   std::shared_ptr<GLTFNormalTextureInfo> tmp (new GLTFNormalTextureInfo ());
 
-  size_t shifted_index = index + helper.textures_size ();
+  size_t shifted_index = index + helper.texture_defaults_size();
   if (index < 0)
     {
       std::cout << "[W] glTF 2.0 5.20.1: material.normalTexture.index >= 0"
