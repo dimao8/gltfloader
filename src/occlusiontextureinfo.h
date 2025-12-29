@@ -5,6 +5,7 @@
 #include "indexhelper.h"
 
 #include <memory>
+#include <optional>
 
 namespace gltfloader
 {
@@ -20,15 +21,16 @@ private:
 
 public:
   GLTFOcclusionTextureInfo (const GLTFOcclusionTextureInfo &) = delete;
-  virtual ~GLTFOcclusionTextureInfo () {}
+  virtual ~GLTFOcclusionTextureInfo ();
 
   size_t index () const;
   size_t texcoord () const;
   float strength () const;
 
   static std::shared_ptr<GLTFOcclusionTextureInfo>
-  create (const IndexHelper &helper, int index, int texcoord = 0,
-          float strength = 1.0f);
+  create (const IndexHelper &helper, int index,
+          const std::optional<int> &texcoord,
+          const std::optional<float> &strength);
 };
 
 }
