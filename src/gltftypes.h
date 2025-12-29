@@ -1,6 +1,8 @@
 #ifndef GLTFTYPES_H
 #define GLTFTYPES_H
 
+#include <array>
+
 namespace gltfloader
 {
 
@@ -92,6 +94,8 @@ enum class GLTFTextureWrap
   mirrored_repeat = 33648,
   repeat = 10497
 };
+
+typedef std::array<float, 4> GLTFVector4f;
 
 }
 

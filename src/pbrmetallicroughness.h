@@ -7,9 +7,12 @@
 #define PBRMETALLICROUGHNESS_H
 
 #include "gltfobject.h"
+#include "gltftypes.h"
+#include "indexhelper.h"
 
 #include <array>
 #include <memory>
+#include <optional>
 
 namespace gltfloader
 {
@@ -22,7 +25,7 @@ class GLTFTextureInfo;
 class GLTFPBRMetallicRoughness : public GLTFObject
 {
 private:
-  std::array<float, 4>
+  GLTFVector4f
       m_base_color_factor; /// material.pbrMetallicRoughness.baseColorFactor
   std::shared_ptr<GLTFTextureInfo> m_base_color_texture;
   float m_metallic_factor;
@@ -36,7 +39,7 @@ private:
 
 public:
   GLTFPBRMetallicRoughness (const GLTFPBRMetallicRoughness &) = delete;
-  virtual ~GLTFPBRMetallicRoughness () {}
+  virtual ~GLTFPBRMetallicRoughness ();
 
   const std::array<float, 4> &base_color_factor () const;
   const std::shared_ptr<GLTFTextureInfo> &base_color_texture () const;
@@ -48,12 +51,12 @@ public:
    * \brief Fabric creation method for GLTFPBRMetallicRoughness class
    */
   static std::shared_ptr<GLTFPBRMetallicRoughness>
-  create (const std::array<float, 4> &base_color_factor
-          = { 1.0f, 1.0f, 1.0f, 1.0f },
-          const std::shared_ptr<GLTFTextureInfo> &base_color_texture = nullptr,
-          float metallic_factor = 1.0f, float roughness_factor = 1.0f,
-          const std::shared_ptr<GLTFTextureInfo> &metallic_roughness_texture
-          = nullptr);
+  create (IndexHelper &helper,
+          const std::optional<GLTFVector4f> &base_color_factor,
+          const std::shared_ptr<GLTFTextureInfo> &base_color_texture,
+          const std::optional<float> &metallic_factor,
+          const std::optional<float> &roughness_factor,
+          const std::shared_ptr<GLTFTextureInfo> &metallic_roughness_texture);
 };
 
 }

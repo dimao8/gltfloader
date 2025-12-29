@@ -335,7 +335,7 @@ IndexHelper::is_indirect_parent (size_t index, size_t parent) const
 
 /* ************************* IndexHelper::accessor ************************* */
 
-const std::shared_ptr<const GLTFAccessor>
+const std::shared_ptr<GLTFAccessor>
 IndexHelper::accessor (size_t index) const
 {
   if (index <= m_accessors.size ())
@@ -346,7 +346,7 @@ IndexHelper::accessor (size_t index) const
 
 /* ************************* IndexHelper::animation ************************ */
 
-const std::shared_ptr<const GLTFAnimation>
+const std::shared_ptr<GLTFAnimation>
 IndexHelper::animation (size_t index) const
 {
   if (index >= m_animations.size ())
@@ -357,7 +357,7 @@ IndexHelper::animation (size_t index) const
 
 /* ************************** IndexHelper::buffer ************************** */
 
-const std::shared_ptr<const GLTFBuffer>
+const std::shared_ptr<GLTFBuffer>
 IndexHelper::buffer (size_t index) const
 {
   if (index >= m_buffers.size ())
@@ -368,7 +368,7 @@ IndexHelper::buffer (size_t index) const
 
 /* ************************ IndexHelper::buffer_view *********************** */
 
-const std::shared_ptr<const GLTFBufferView>
+const std::shared_ptr<GLTFBufferView>
 IndexHelper::buffer_view (size_t index) const
 {
   if (index >= m_buffer_views.size ())
@@ -379,7 +379,7 @@ IndexHelper::buffer_view (size_t index) const
 
 /* ************************** IndexHelper::camera ************************** */
 
-const std::shared_ptr<const GLTFCamera>
+const std::shared_ptr<GLTFCamera>
 IndexHelper::camera (size_t index) const
 {
   if (index >= m_cameras.size ())
@@ -390,7 +390,7 @@ IndexHelper::camera (size_t index) const
 
 /* *************************** IndexHelper::image ************************** */
 
-const std::shared_ptr<const GLTFImage>
+const std::shared_ptr<GLTFImage>
 IndexHelper::image (size_t index) const
 {
   if (index >= m_images.size ())
@@ -401,7 +401,7 @@ IndexHelper::image (size_t index) const
 
 /* ************************* IndexHelper::material ************************* */
 
-const std::shared_ptr<const GLTFMaterial>
+const std::shared_ptr<GLTFMaterial>
 IndexHelper::material (size_t index) const
 {
   if (index >= m_materials.size ())
@@ -412,7 +412,7 @@ IndexHelper::material (size_t index) const
 
 /* *************************** IndexHelper::mesh *************************** */
 
-const std::shared_ptr<const GLTFMesh>
+const std::shared_ptr<GLTFMesh>
 IndexHelper::mesh (size_t index) const
 {
   if (index >= m_meshes.size ())
@@ -423,7 +423,7 @@ IndexHelper::mesh (size_t index) const
 
 /* *************************** IndexHelper::node *************************** */
 
-const std::shared_ptr<const GLTFNode>
+const std::shared_ptr<GLTFNode>
 IndexHelper::node (size_t index) const
 {
   if (index >= m_nodes.size ())
@@ -434,7 +434,7 @@ IndexHelper::node (size_t index) const
 
 /* ************************** IndexHelper::sampler ************************* */
 
-const std::shared_ptr<const GLTFSampler>
+const std::shared_ptr<GLTFSampler>
 IndexHelper::sampler (size_t index) const
 {
   if (index >= m_samplers.size ())
@@ -445,7 +445,7 @@ IndexHelper::sampler (size_t index) const
 
 /* *************************** IndexHelper::scene ************************** */
 
-const std::shared_ptr<const GLTFSampler>
+const std::shared_ptr<GLTFSampler>
 IndexHelper::scene (size_t index) const
 {
   if (index >= m_scenes.size ())
@@ -456,7 +456,7 @@ IndexHelper::scene (size_t index) const
 
 /* *************************** IndexHelper::skin *************************** */
 
-const std::shared_ptr<const GLTFSkin>
+const std::shared_ptr<GLTFSkin>
 IndexHelper::skin (size_t index) const
 {
   if (index >= m_skins.size ())
@@ -467,7 +467,7 @@ IndexHelper::skin (size_t index) const
 
 /* ************************** IndexHelper::texture ************************* */
 
-const std::shared_ptr<const GLTFTexture>
+const std::shared_ptr<GLTFTexture>
 IndexHelper::texture (size_t index) const
 {
   if (index >= m_textures.size ())
@@ -478,7 +478,7 @@ IndexHelper::texture (size_t index) const
 
 /* *********************** IndexHelper::texture_info *********************** */
 
-const std::shared_ptr<const GLTFTextureInfo>
+const std::shared_ptr<GLTFTextureInfo>
 IndexHelper::texture_info (size_t index) const
 {
   if (index >= m_texture_infos.size ())
