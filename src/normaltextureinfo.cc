@@ -7,7 +7,15 @@ namespace gltfloader
 
 /* ************** GLTFNormalTextureInfo::GLTFNormalTextureInfo ************* */
 
-GLTFNormalTextureInfo::GLTFNormalTextureInfo () : GLTFObject ()
+GLTFNormalTextureInfo::GLTFNormalTextureInfo ()
+    : GLTFObject (), m_index (0), m_texcoord (0), m_scale (1.0)
+{
+  //
+}
+
+/* ************* GLTFNormalTextureInfo::~GLTFNormalTextureInfo ************* */
+
+GLTFNormalTextureInfo::~GLTFNormalTextureInfo ()
 {
   //
 }
@@ -40,34 +48,36 @@ GLTFNormalTextureInfo::scale () const
 
 std::shared_ptr<GLTFNormalTextureInfo>
 GLTFNormalTextureInfo::create (const IndexHelper &helper, int index,
-                               int texcoord, float scale)
+                               const std::optional<int> &texcoord,
+                               const std::optional<float> &scale)
 {
   std::shared_ptr<GLTFNormalTextureInfo> tmp (new GLTFNormalTextureInfo ());
 
+  size_t shifted_index = index + helper.texture_defaults_size();
   if (index < 0)
     {
       std::cout << "[W] glTF 2.0 5.20.1: material.normalTexture.index >= 0"
                 << std::endl;
       return nullptr;
     }
-  if (index >= helper.textures_size ())
+  else if (shifted_index >= helper.textures_size ())
     {
       std::cout << "[W] glTF 2.0 5.20.1: material.normalTexture.index is out "
                    "of range"
                 << std::endl;
       return nullptr;
     }
-  tmp->m_index = index;
+  tmp->m_index = shifted_index;
 
-  if (texcoord < 0)
+  tmp->m_texcoord = texcoord.value_or (0);
+  if (tmp->m_texcoord < 0)
     {
       std::cout << "[W] glTF 2.0 5.20.2: material.normalTexture.texCoord >= 0"
                 << std::endl;
       return nullptr;
     }
-  tmp->m_texcoord = texcoord;
 
-  tmp->m_scale = scale;
+  tmp->m_scale = scale.value_or (1.0);
   return tmp;
 }
 
