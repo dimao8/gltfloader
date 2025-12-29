@@ -8,7 +8,15 @@ namespace gltfloader
 
 /* *************************** GLTFMesh::GLTFMesh ************************** */
 
-GLTFMesh::GLTFMesh (const std::string &name) : GLTFNamedObject (name)
+GLTFMesh::GLTFMesh (const std::string &name)
+    : GLTFNamedObject (name), m_primitives (), m_weights ()
+{
+  //
+}
+
+/* ************************** GLTFMesh::~GLTFMesh ************************** */
+
+GLTFMesh::~GLTFMesh ()
 {
   //
 }
