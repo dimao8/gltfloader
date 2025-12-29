@@ -302,6 +302,13 @@ IndexHelper::default_material_emissive_texture_info () const
   return 0;
 }
 
+size_t
+IndexHelper::default_pbr_metallic_roughness_texture_info () const
+{
+  // TODO : What if there are no default texture infos?
+  return 1;
+}
+
 /* ******************** IndexHelper::is_indirect_parent ******************** */
 
 bool
