@@ -345,7 +345,7 @@ IndexHelper::is_indirect_parent (size_t index, size_t parent) const
 const std::shared_ptr<GLTFAccessor>
 IndexHelper::accessor (size_t index) const
 {
-  if (index <= m_accessors.size ())
+  if (index >= m_accessors.size ())
     return nullptr;
   else
     return m_accessors[index];

@@ -1,6 +1,8 @@
 #include "pbrmetallicroughness.h"
 #include "gltfobject.h"
+#include "gltftypes.h"
 
+#include <cstddef>
 #include <iostream>
 
 namespace gltfloader
@@ -76,16 +78,12 @@ GLTFPBRMetallicRoughness::create (
   std::shared_ptr<GLTFPBRMetallicRoughness> tmp (
       new GLTFPBRMetallicRoughness ());
 
+  GLTFVector4f v = base_color_factor.value ();
+
   if (base_color_factor == std::nullopt)
     tmp->m_base_color_factor = { 1.0f, 1.0f, 1.0f, 1.0f };
-  else if ((base_color_factor.value ()[0] < 0.0f)
-           || (base_color_factor.value ()[0] > 1.0f)
-           || (base_color_factor.value ()[1] < 0.0f)
-           || (base_color_factor.value ()[1] > 1.0f)
-           || (base_color_factor.value ()[2] < 0.0f)
-           || (base_color_factor.value ()[2] > 1.0f)
-           || (base_color_factor.value ()[3] < 0.0f)
-           || (base_color_factor.value ()[3] > 1.0f))
+  else if ((v[0] < 0.0f) || (v[0] > 1.0f) || (v[1] < 0.0f) || (v[1] > 1.0f)
+           || (v[2] < 0.0f) || (v[2] > 1.0f) || (v[3] < 0.0f) || (v[3] > 1.0f))
     {
       std::cout << "[W] glTF 2.0: The base color factor components in PBR "
                    "object MUST fit into [0.0, 1.0] range"
@@ -93,7 +91,7 @@ GLTFPBRMetallicRoughness::create (
       return nullptr;
     }
   else
-    tmp->m_base_color_factor = base_color_factor.value ();
+    tmp->m_base_color_factor = v;
 
   if (base_color_texture != nullptr)
     tmp->m_base_color_texture = base_color_texture;
